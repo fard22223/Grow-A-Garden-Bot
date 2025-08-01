@@ -89,6 +89,7 @@ end
 
 all_connections[#all_connections + 1] = run_service.Heartbeat:Connect(function(dt)
     for i, v in all_seeds do
-        buy_seed(v, 200)
+        buy_seed(v, 1)
+        task.wait(1);
     end
 end)
