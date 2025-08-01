@@ -36,6 +36,19 @@ end
 
 local function sell_inventory()
     game.ReplicatedStorage.GameEvents.Sell_Inventory:FireServer()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Workspace.NPCS.Steven.HumanoidRootPart.CFrame
+end
+
+local function pickup_all_fruits()
+   for _, prompt in ipairs(game.Workspace.Farms:GetDescendants()) do
+        if prompt:IsA("ProximityPrompt") and prompt.Enabled then
+            local part = prompt.Parent:IsA("BasePart") and prompt.Parent or prompt.Parent:FindFirstChildWhichIsA("BasePart")
+            if part then
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.CFrame 
+            end
+            fireproximityprompt(prompt)
+        end       
+    end
 end
  
 while true do
@@ -43,13 +56,9 @@ while true do
         buy_seed(v)
     end
 
-    for _, prompt in ipairs(game.Farms:GetDescendants()) do
-        if prompt:IsA("ProximityPrompt") and prompt.Enabled then
-            fireproximityprompt(prompt)
-        end
-    end
-
+    wait(0.05)
     submit_all_zen()
-    wait(0.1)
+    wait(0.05)
     sell_inventory()
+    wait(0.05)
 end
