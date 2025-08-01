@@ -40,7 +40,15 @@ local function sell_inventory()
 end
 
 local function pickup_all_fruits()
-   for _, prompt in ipairs(game.Workspace.Farm:GetDescendants()) do
+    local found_farm = nil
+    for i, v in pairs(game.Workspace.Farm:GetChildren()) do
+        if v.Important.Data.Owner.Value == game.Players.LocalPlayer.Name then
+            found_farm = v
+        end
+    end
+
+    if not found_farm then return end
+    for _, prompt in ipairs(found_farm.Important.Plants_Physical.GetDescendants()) do
         if prompt:IsA("ProximityPrompt") and prompt.Enabled and prompt.Parent:IsA("BasePart") then
             local part = prompt.Parent
             if part then
@@ -57,7 +65,7 @@ while true do
     end
 
     pickup_all_fruits()
-    wait(0.05)
+    wait(0.45)
     submit_all_zen()
     wait(1)
     sell_inventory()
