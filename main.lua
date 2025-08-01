@@ -50,9 +50,10 @@ local function pickup_all_fruits()
     if not found_farm then return end
     for _, prompt in ipairs(found_farm.Important.Plants_Physical:GetDescendants()) do
         if prompt:IsA("ProximityPrompt") and prompt.Enabled and prompt.Parent:IsA("BasePart") then
+            prompt.RequiresLineOfSight = false
             local part = prompt.Parent
             if part then
-                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.CFrame 
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.CFrame * CFrame.new(0.15, 0.15, 0.15)
             end
             fireproximityprompt(prompt)
         end       
@@ -65,7 +66,7 @@ while true do
     end
 
     pickup_all_fruits()
-    wait(0.45)
+    wait(0.05)
     submit_all_zen()
     wait(1)
     sell_inventory()
