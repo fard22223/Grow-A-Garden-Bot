@@ -48,7 +48,7 @@ local function pickup_all_fruits()
     end
 
     if not found_farm then return end
-    for _, prompt in ipairs(found_farm.Important.Plants_Physical.GetDescendants()) do
+    for _, prompt in ipairs(found_farm.Important.Plants_Physical:GetDescendants()) do
         if prompt:IsA("ProximityPrompt") and prompt.Enabled and prompt.Parent:IsA("BasePart") then
             local part = prompt.Parent
             if part then
