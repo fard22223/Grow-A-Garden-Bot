@@ -40,7 +40,7 @@ local function sell_inventory()
 end
 
 local function pickup_all_fruits()
-   for _, prompt in ipairs(game.Workspace.Farms:GetDescendants()) do
+   for _, prompt in ipairs(game.Workspace.Farm:GetDescendants()) do
         if prompt:IsA("ProximityPrompt") and prompt.Enabled and prompt.Parent:IsA("BasePart") then
             local part = prompt.Parent
             if part then
