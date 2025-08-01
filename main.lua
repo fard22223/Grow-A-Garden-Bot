@@ -41,8 +41,8 @@ end
 
 local function pickup_all_fruits()
    for _, prompt in ipairs(game.Workspace.Farms:GetDescendants()) do
-        if prompt:IsA("ProximityPrompt") and prompt.Enabled then
-            local part = prompt.Parent:IsA("BasePart") and prompt.Parent or prompt.Parent:FindFirstChildWhichIsA("BasePart")
+        if prompt:IsA("ProximityPrompt") and prompt.Enabled and prompt.Parent:IsA("BasePart") then
+            local part = prompt.Parent
             if part then
                 game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = part.CFrame 
             end
@@ -56,9 +56,10 @@ while true do
         buy_seed(v)
     end
 
+    pickup_all_fruits()
     wait(0.05)
     submit_all_zen()
-    wait(0.05)
+    wait(1)
     sell_inventory()
     wait(0.05)
 end
