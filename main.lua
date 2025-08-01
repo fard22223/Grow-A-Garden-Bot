@@ -1,18 +1,5 @@
-local players = game:GetService("Players")
-local run_service = game:GetService("RunService")
-local replicated_storage = game:GetService("ReplicatedStorage")
-local game_events = replicated_storage:WaitForChild("GameEvents")
-local farms = workspace.Farms
-
-workspace:SetAttribute("BOT_LOADED", nil)
-workspace:SetAttribute("BOT_LOADED", true)
-
-local local_player = players.LocalPlayer
-local local_farm = nil
-local all_connections = {}
 local all_seeds = {
     "Carrot",
-    "Tomato",
     "Blueberry",
     "Strawberry",
     "Orange Tulip",
@@ -39,57 +26,30 @@ local all_seeds = {
     "Elder Strawberry",
 }
 
-for i, v in pairs(farms:GetChildren()) do  
-    if v.Important.Data.Owner.Value == local_player.Name then
-        local_farm = v
-        break
-    end
+local function buy_seed(seed)
+    game.ReplicatedStorage.GameEvents.BuySeedStock:FireServer(seed)
 end
 
-all_connections[#all_connections + 1] = workspace:GetAttributeChangedSignal("BOT_LOADED"):Connect(function()
-    if not workspace:GetAttribute("BOT_LOADED") then
-        for i, v in all_connections do
-            pcall(function() v:Disconnect() end)
-            pcall(function() task.cancel(v) end)
-            pcall(function() v:Destroy() end)
-
-            v = nil 
-        end
-    end
-end)
-
-local check = function()
-    if local_player.Character and local_player.Character.Parent and local_player.Character:FindFirstChild("HumanoidRootPart") then
-        return true
-    end
-
-    return false
+local function submit_all_zen()
+    game.ReplicatedStorage.GameEvents.ZenQuestRemoteEvent:FireServer("SubmitAllPlants")
 end
 
-local sell_inventory = function()
-    if not check() then return end
-
-    local_player.Character.HumanoidRootPart.CFrame = workspace.NPCS.Steven.HumanoidRootPart.CFrame
-    all_connections[#all_connections + 1] = task.delay(0.05, function()
-        game_events.Sell_Inventory:FireServer()
-    end)
+local function sell_inventory()
+    game.ReplicatedStorage.GameEvents.Sell_Inventory:FireServer()
 end
-
-local buy_seed = function(seed, amount)
-    if not check() then return end
-
-    if amount then
-        for i = 0, amount do
-            game_events.BuySeedStock:FireServer(seed)
-        end
-    else
-        game_events.BuySeedStock:FireServer(seed)
-    end
-end
-
-all_connections[#all_connections + 1] = run_service.Heartbeat:Connect(function(dt)
+ 
+while true do
     for i, v in all_seeds do
-        buy_seed(v, 1)
-        task.wait(1);
+        buy_seed(v)
     end
-end)
+
+    for _, prompt in ipairs(game.Farms:GetDescendants()) do
+        if prompt:IsA("ProximityPrompt") and prompt.Enabled then
+            fireproximityprompt(prompt)
+        end
+    end
+
+    submit_all_zen()
+    wait(0.1)
+    sell_inventory()
+end
