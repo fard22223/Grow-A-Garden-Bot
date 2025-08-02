@@ -78,8 +78,6 @@ local all_gear = {
 -- Plant_RE = plants a seed, first parameter is the position, second is the seed
 -- BuySeedStock = buys a seed 
 
-local url = "https://raw.githubusercontent.com/fard22223/Grow-A-Garden-Bot/refs/heads/main/main.lua"
-local old_script = game:HttpGet(url)
 local current_placeid = game.PlaceId
 local found_farm = nil
 local do_main_loop = false
@@ -96,28 +94,29 @@ local last_master_sprinkler = tick()
 local last_grandmaster_sprinkler = tick()
 local current_tween = nil
 
-local insert = function(connection)
     all_connections[#all_connections + 1] = connection
 end
 
-print("dookie dick")
+local url = "https://raw.githubusercontent.com/yourname/yourrepo/main/script.lua"
+local function get_script()
+    local success, result = pcall(function()
+        return game:HttpGet(url .. "?t=" .. os.time())
+    end)
+    if success then return result end
+    warn("Failed to fetch script:", result)
+    return nil
+end
 
--- auto update
+local old_script = get_script()
+if not old_script then return end
 coroutine.wrap(function()
     while true do
         task.wait(5)
 
-        local success, latest_script = pcall(function()
-            return game:HttpGet(url)
-        end)
-
-        if not success then
-            warn("Failed to get latest script:", latest_script)
-            continue
-        end
-
-        if latest_script ~= old_script then
+        local latest_script = get_script()
+        if latest_script and latest_script ~= old_script then
             print("[Updater] Script changed, updating...")
+
             quit = true
             do_main_loop = false
 
@@ -135,7 +134,6 @@ coroutine.wrap(function()
             if not ok then
                 warn("[Updater] Error loading new script:", err)
             end
-
             break
         else
             print("[Updater] No update found.")
