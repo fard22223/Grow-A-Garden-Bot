@@ -103,18 +103,40 @@ end
 -- auto update
 coroutine.wrap(function()
     while true do
-        wait(5)
-        
-        local latest_script = game:HttpGet(url)
+        task.wait(5)
+
+        local success, latest_script = pcall(function()
+            return game:HttpGet(url)
+        end)
+
+        if not success then
+            warn("Failed to get latest script:", latest_script)
+            continue
+        end
+
         if latest_script ~= old_script then
+            print("[Updater] Script changed, updating...")
             quit = true
             do_main_loop = false
-            for i, v in all_connections do
-                v:Disconnect()
-                v = nil
+
+            for i, v in pairs(all_connections) do
+                if typeof(v) == "RBXScriptConnection" then
+                    v:Disconnect()
+                end
+                all_connections[i] = nil
             end
-            loadstring(latest_script)()
+
+            local ok, err = pcall(function()
+                loadstring(latest_script)()
+            end)
+
+            if not ok then
+                warn("[Updater] Error loading new script:", err)
+            end
+
             break
+        else
+            print("[Updater] No update found.")
         end
     end
 end)()
