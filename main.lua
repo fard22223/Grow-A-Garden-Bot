@@ -29,6 +29,25 @@ local all_seeds = {
     "Elder Strawberry",
 }
 
+local all_event_shop = {
+    "Zen Seed Pack",
+    "Raiju",
+    "Pet Shard Corrupted",
+    "Pet Shard Tranquil",
+    "Spiked Mango",
+    "Koi",
+    "Zen Gnome Crate",
+    "Soft Sunshine",
+    "Sakura Bush",
+    "Zen Crate",
+    "Zenfalre",
+    "Corrupt Radar",
+    "Tranquil Radar",
+    "Zen Sand",
+    "Hot Spring",
+    "Zen Egg",
+}
+
 local all_gear = {
     "Watering Can",
     "Trowel",
@@ -42,7 +61,11 @@ local all_zen_seeds = {
     "Monoblooma",
     "Taro Flower",
     "Zen Rocks",
+    "Spiked Mango",
     "Hinomai",
+    "Sakura Bush",
+    "Soft Sunshine",
+    "Zenfalre",
     "Maple Apple"
 }
 
@@ -82,7 +105,7 @@ end)
 
 local function mouse_click(cf, value)
     if not cf or not value then return end
-    
+
     local tool = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
     if tool then
         tool:Activate()
