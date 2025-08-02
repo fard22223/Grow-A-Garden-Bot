@@ -77,8 +77,7 @@ local all_gear = {
 -- Water_RE = watering can, first param is position
 -- Plant_RE = plants a seed, first parameter is the position, second is the seed
 -- BuySeedStock = buys a seed 
-
-local CURRENT_VERSION = "1.0.1"
+-- loadstring(game:HttpGet("https://raw.githubusercontent.com/fard22223/Grow-A-Garden-Bot/refs/heads/main/main.lua"))()
 
 local current_placeid = game.PlaceId
 local found_farm = nil
@@ -96,53 +95,9 @@ local last_master_sprinkler = tick()
 local last_grandmaster_sprinkler = tick()
 local current_tween = nil
 
-print("dingalingfuckingraper")
-
 local insert = function(connection)
     all_connections[#all_connections + 1] = connection
 end
-
-local version_url = "https://raw.githubusercontent.com/fard22223/Grow-A-Garden-Bot/refs/heads/main/version.txt"
-local script_url = "https://raw.githubusercontent.com/fard22223/Grow-A-Garden-Bot/refs/heads/main/main.lua"
-coroutine.wrap(function() 
-    while not quit do
-        task.wait(5)
-        local success, latest_version = pcall(function()
-            return game:HttpGet(version_url)
-        end)
-
-        if success and latest_version then
-            latest_version = latest_version:match("%S+")
-            local current_version = CURRENT_VERSION:match("%S+")
-
-            if latest_version ~= current_version then
-                print("[Updater] New version found:", latest_version)
-        
-                local ok, new_script = pcall(function()
-                    return game:HttpGet(script_url)
-                end)
-
-                if ok and new_script then
-                    print("[Updater] Updating")
-
-                    quit = true
-                    do_main_loop = false
-
-                    for i,v in all_connections do 
-                        v:Disconnect()
-                        v = nil
-                    end
-
-                    loadstring(new_script)()
-                else
-                    warn("[Updater] Failed to load updated script.")
-                end
-            end
-        else
-            warn("[Updater] it fucking failed somehow")
-        end
-    end
-end)()
 
 game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 25
 for i, v in pairs(game.Workspace.Farm:GetChildren()) do
@@ -208,6 +163,13 @@ end
 
 local function buy_gear(gear)
     game.ReplicatedStorage.GameEvents.BuyGearStock:FireServer(gear)
+end
+
+local function move_cursor_to_part(part)
+    local screen_pos, on_screen = camera:WorldToScreenPoint(targetPart.Position)
+    if not on_screen then return false end
+    vim:SendMouseMoveEvent(screen_pos.X, screen_pos.Y, game)
+    return true
 end
 
 local function sell_inventory()
@@ -314,6 +276,18 @@ text_chat_service.OnIncomingMessage = function(message)
             end)()
         elseif message.Text:lower() == "stopbotting" then
             do_main_loop = false
+        elseif message.Text:lower() == "deleteallbadplants" then
+
+            for i, v in pairs(found_farm.Important.Plants_Physical:GetChildren()) do
+                if not whitelisted_seeds[v.Name] then
+                    local tool = get_tool("Shovel")
+                    workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, v:FindFirstChildOfClass("BasePart").Position + Vector3.new(math.random(-5, 5), math.random(-2, 2), math.random(-3, 3)))
+                    move_cursor_to_part(v:FindFirstChildOfClass("BasePart"))
+                    tool:Activate()
+                    wait()
+                    game.ReplicatedStorage.GameEvents.Remove_Item:FireServer(Instance.new("Part", nil))
+                end
+            end
         end
     end
 end
