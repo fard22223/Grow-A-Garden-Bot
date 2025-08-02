@@ -195,50 +195,51 @@ local function pickup_all_fruits()
 end
 
 chat_service:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: plantallseeds, startbotting", Enum.ChatColor.Blue)
-
-game.Players.LocalPlayer.Chatted:Connect(function(message)
-    if message:lower() == "plantallseeds" then
-        for i, v in all_zen_seeds do
-            place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
-        end
-
-        for i, v in all_seeds do
-            place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
-        end
-    elseif message:lower() == "startbotting" then
-        coroutine.wrap(function() 
-            while true do
-                print("poo dick")
-                if (tick() - last_shop_buy) > 25 then
-                    last_shop_buy = tick() 
-                    for i, v in all_seeds do
-                        buy_seed(v)
-                    end
-                end
-                
-                if (tick() - last_gear_buy) > 25 then
-                    last_gear_buy = tick() 
-                    for i, v in all_gear do
-                        buy_gear(v)
-                    end
-                end
-
-                wait(0.1)
-                open_seed_pack("Zen Seed Pack")
-                pickup_all_fruits()
-
-                if (tick() - last_sell_inventory) > 4 then
-                    submit_all_zen()
-                end
-
-                if (tick() - last_sell_inventory) > 22 then
-                    submit_all_zen()
-                    last_sell_inventory = tick() 
-                    sell_inventory()
-                end
-
-                wait(0.3)
+text_chat_service.OnIncomingMessage = function(message)
+    if message.TextSource and message.TextSource.UserId == game.Players.LocalPlayer.UserId then
+        if message:lower() == "plantallseeds" then
+            for i, v in all_zen_seeds do
+                place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
             end
-        end)()
+
+            for i, v in all_seeds do
+                place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
+            end
+        elseif message:lower() == "startbotting" then
+            coroutine.wrap(function() 
+                while true do
+                    print("poo dick")
+                    if (tick() - last_shop_buy) > 25 then
+                        last_shop_buy = tick() 
+                        for i, v in all_seeds do
+                            buy_seed(v)
+                        end
+                    end
+                    
+                    if (tick() - last_gear_buy) > 25 then
+                        last_gear_buy = tick() 
+                        for i, v in all_gear do
+                            buy_gear(v)
+                        end
+                    end
+
+                    wait(0.1)
+                    open_seed_pack("Zen Seed Pack")
+                    pickup_all_fruits()
+
+                    if (tick() - last_sell_inventory) > 4 then
+                        submit_all_zen()
+                    end
+
+                    if (tick() - last_sell_inventory) > 22 then
+                        submit_all_zen()
+                        last_sell_inventory = tick() 
+                        sell_inventory()
+                    end
+
+                    wait(0.3)
+                end
+            end)()
+        end
     end
-end)
+end
