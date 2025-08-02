@@ -1,3 +1,5 @@
+local vim = game:GetService("VirtualInputManager")
+local chat_service = game:GetService("ChatService")
 local all_seeds = {
     "Carrot",
     "Blueberry",
@@ -80,9 +82,11 @@ end)
 local function mouse_click(cf, value)
     if not cf or not value then return end
 
-    game:GetService("VirtualInputManager"):SendMouseButtonEvent(1, 1, 0, true, game, 0)
+    game:GetService("VirtualInputManager"):SendMouseButtonEvent(1, 1, 0, true, game, Enum.UserInputType.MouseButton1)
     game.Players.LocalPlayer.PlayerScripts.InputGateway.Activation:FireServer(cf, value)
     game.Players.LocalPlayer.Character.InputGateway.Activation:FireServer(cf, value)
+    wait(0.1)
+    game:GetService("VirtualInputManager"):SendMouseButtonEvent(1, 1, 0, false, game, Enum.UserInputType.MouseButton1)
 end
 
 local function get_tool(tool_name)
@@ -152,7 +156,6 @@ local function watering_can(pos)
     game.ReplicatedStorage.GameEvents.Water_RE:FireServer(pos + Vector3.new(0, -0.15, 0))
 end
 
-local vim = game:GetService("VirtualInputManager")
 local picking_up = false
 local function pickup_all_fruits()
     if picking_up then return end
@@ -173,7 +176,9 @@ local function pickup_all_fruits()
                 end)
                 Workspace.CurrentCamera.CFrame = CFrame.new(Workspace.CurrentCamera.CFrame.Position, pos)
                 game.Players.LocalPlayer.Character.Humanoid:MoveTo((prompt.Parent.CFrame * CFrame.new(0, 1, 0)).Position)
+                vim:SendKeyEvent(true, Enum.KeyCode.E, false, game)
                 game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
+                vim:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 
                 if math.random(1, 3) == 3 then
                     -- fireproximityprompt(prompt)    
@@ -182,10 +187,6 @@ local function pickup_all_fruits()
                 for i, v in all_zen_seeds do
                     place_seed(pos, v)
                 end
-
-                vim:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-                wait(0.1)
-                vim:SendKeyEvent(false, Enum.KeyCode.E, false, game)
             end
         end       
     end
@@ -193,35 +194,51 @@ local function pickup_all_fruits()
     picking_up = false
 end
 
-while true do
-    print("poo dick")
-    if (tick() - last_shop_buy) > 25 then
-        last_shop_buy = tick() 
+ChatService:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: plantallseeds, startbotting", Enum.ChatColor.Blue)
+
+LocalPlayer.Chatted:Connect(function(message)
+    if message:lower() == "plantallseeds" then
+        for i, v in all_zen_seeds do
+            place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
+        end
+
         for i, v in all_seeds do
-            buy_seed(v)
+            place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
         end
-    end
-    
-    if (tick() - last_gear_buy) > 25 then
-        last_gear_buy = tick() 
-        for i, v in all_gear do
-            buy_gear(v)
-        end
-    end
+    elseif message:lower() == "startbotting" then
+        coroutine.wrap(function() 
+            while true do
+                print("poo dick")
+                if (tick() - last_shop_buy) > 25 then
+                    last_shop_buy = tick() 
+                    for i, v in all_seeds do
+                        buy_seed(v)
+                    end
+                end
+                
+                if (tick() - last_gear_buy) > 25 then
+                    last_gear_buy = tick() 
+                    for i, v in all_gear do
+                        buy_gear(v)
+                    end
+                end
 
-    wait(0.1)
-    open_seed_pack("Zen Seed Pack")
-    pickup_all_fruits()
+                wait(0.1)
+                open_seed_pack("Zen Seed Pack")
+                pickup_all_fruits()
 
-    if (tick() - last_sell_inventory) > 4 then
-        submit_all_zen()
+                if (tick() - last_sell_inventory) > 4 then
+                    submit_all_zen()
+                end
+
+                if (tick() - last_sell_inventory) > 22 then
+                    submit_all_zen()
+                    last_sell_inventory = tick() 
+                    sell_inventory()
+                end
+
+                wait(0.3)
+            end
+        end)()
     end
-
-    if (tick() - last_sell_inventory) > 22 then
-        submit_all_zen()
-        last_sell_inventory = tick() 
-        sell_inventory()
-    end
-
-    wait(0.3)
-end
+end)
