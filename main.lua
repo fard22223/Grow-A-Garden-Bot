@@ -194,7 +194,7 @@ local function pickup_all_fruits()
     picking_up = false
 end
 
-ChatService:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: plantallseeds, startbotting", Enum.ChatColor.Blue)
+chat_service:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: plantallseeds, startbotting", Enum.ChatColor.Blue)
 
 game.Players.LocalPlayer.Chatted:Connect(function(message)
     if message:lower() == "plantallseeds" then
