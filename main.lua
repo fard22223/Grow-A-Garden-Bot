@@ -1,6 +1,9 @@
 local vim = game:GetService("VirtualInputManager")
 local chat_service = game:GetService("Chat")
 local text_chat_service = game:GetService("TextChatService")
+local teleport_service = game:GetService("TeleportService")
+local gui_service = game:GetService("GuiService")
+
 local all_seeds = {
     "Carrot",
     "Blueberry",
@@ -29,23 +32,36 @@ local all_seeds = {
     "Elder Strawberry",
 }
 
-local all_event_shop = {
-    "Zen Seed Pack",
-    "Raiju",
-    "Pet Shard Corrupted",
-    "Pet Shard Tranquil",
-    "Spiked Mango",
-    "Koi",
-    "Zen Gnome Crate",
-    "Soft Sunshine",
-    "Sakura Bush",
-    "Zen Crate",
-    "Zenfalre",
-    "Corrupt Radar",
-    "Tranquil Radar",
-    "Zen Sand",
-    "Hot Spring",
-    "Zen Egg",
+local whitelisted_seeds = {
+    "Grape", 
+    "Loquat",
+    "Mushroom",
+    "Pepper",
+    "Cacao",
+    "Feijoa",
+    "Pitcher Plant",
+    "Grand Volcania",
+    "Sunflower",
+    "Maple Apple",
+    "Beanstalk",
+    "Ember Lily",
+    "Sugar Apple",
+    "Burning Bud",
+    "Giant Pinecone",
+    "Elder Strawberry",  
+    "Tranquil Bloom",
+    "Bone Blossom", 
+    "Elephant Ears",
+    "Candy Blossom",
+    "Lotus",
+    "Venus Fly Trap",
+    "Cursed Fruit",
+    "Soul Fruit",
+    "Dragon Pepper",
+    "Rosy Delight",
+    "Traveler's Fruit",
+    "Grand Tomato",
+    "Fossilight"
 }
 
 local all_gear = {
@@ -54,58 +70,84 @@ local all_gear = {
     "Basic Sprinkler",
     "Advanced Sprinkler",
     "Master Sprinkler",
-}
-
-local all_zen_seeds = {
-    "Serenity",
-    "Monoblooma",
-    "Taro Flower",
-    "Zen Rocks",
-    "Spiked Mango",
-    "Hinomai",
-    "Sakura Bush",
-    "Soft Sunshine",
-    "Zenfalre",
-    "Maple Apple"
+    "Grandmaster Sprinkler"
 }
 
 -- Sell_Inventory = sells entire inventory
 -- Water_RE = watering can, first param is position
 -- Plant_RE = plants a seed, first parameter is the position, second is the seed
 -- BuySeedStock = buys a seed 
--- ZenQuestRemoteEvent = zen event, has a bunch of things including SubmitAllPlants
 
+local url = "https://raw.githubusercontent.com/fard22223/Grow-A-Garden-Bot/refs/heads/main/main.lua"
+local old_script = game:HttpGet(url)
+local current_placeid = game.PlaceId
 local found_farm = nil
+local do_main_loop = false
+local quit = false 
 local selling_inventory = false
+local all_connections = {}
 local last_water = tick()
 local last_sell_inventory = tick()
 local last_gear_buy = tick()
 local last_shop_buy = tick()
+local last_basic_sprinkler = tick()
+local last_advanced_sprinkler = tick()
+local last_master_sprinkler = tick()
+local last_grandmaster_sprinkler = tick()
 local current_tween = nil
 
-game.Players.LocalPlayer.Character.Humanoid.WalkSpeed += 22
+local insert = function(connection)
+    all_connections[#all_connections + 1] = connection
+end
 
+-- auto update
+coroutine.wrap(function()
+    while true do
+        wait(5)
+        
+        local latest_script = game:HttpGet(url)
+        if latest_script ~= old_script then
+            quit = true
+            do_main_loop = false
+            for i, v in all_connections do
+                v:Disconnect()
+                v = nil
+            end
+            loadstring(latest_script)()
+            break
+        end
+    end
+end)()
+
+game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 25
 for i, v in pairs(game.Workspace.Farm:GetChildren()) do
     if v.Important.Data.Owner.Value == game.Players.LocalPlayer.Name then
         found_farm = v
     end
 end
 
+-- to make it easier on the bot 
 for i, v in pairs(game.Workspace.Farm:GetDescendants()) do
     if v:IsA("BasePart") then
         v.CanCollide = false
     end
 end
 
-game.Workspace.Farm.DescendantAdded:Connect(function(dick)
+insert(game.Workspace.Farm.DescendantAdded:Connect(function(dick)
     if dick:IsA("BasePart") then
         dick.CanCollide = false
     end
-end)
+end))
 
-local function mouse_click(cf, value)
-    if not cf or not value then return end
+-- rejoin on when bullshit happens
+insert(gui_service.OnErrorMessageChanged:Connect(function(error_message)
+    if error_message and error_message ~= "" then
+        wait()
+        teleport_service:Teleport(current_placeid, game.Players.LocalPlayer)
+    end
+end))
 
+local function mouse_click()
     local tool = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
     if tool then
         tool:Activate()
@@ -131,10 +173,10 @@ local function get_tool(tool_name)
 end
 
 local function open_seed_pack(name)
-    local tool = get_tool("Zen Seed Pack")
+    local tool = get_tool(name)
     if not tool then return end
 
-    mouse_click(CFrame.new(0, 0, 0), true)
+    mouse_click()
 end
 
 local function place_seed(pos, seed_name)
@@ -147,16 +189,8 @@ local function buy_seed(seed)
     game.ReplicatedStorage.GameEvents.BuySeedStock:FireServer(seed)
 end
 
-local function buy_event_stock(item)
-    game.ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item)
-end
-
 local function buy_gear(gear)
     game.ReplicatedStorage.GameEvents.BuyGearStock:FireServer(gear)
-end
-
-local function submit_all_zen()
-    game.ReplicatedStorage.GameEvents.ZenQuestRemoteEvent:FireServer("SubmitAllPlants")
 end
 
 local function sell_inventory()
@@ -165,7 +199,7 @@ local function sell_inventory()
         current_tween:Cancel()
     end
 
-    game.Players.LocalPlayer.Character.Humanoid:MoveTo(Workspace.NPCS.Steven.HumanoidRootPart.Position)
+    game.Players.LocalPlayer.Character.Humanoid:MoveTo(workspace.NPCS.Steven.HumanoidRootPart.Position)
     game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
     game.ReplicatedStorage.GameEvents.Sell_Inventory:FireServer()
     wait(0.2)
@@ -207,7 +241,7 @@ local function pickup_all_fruits()
                 game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
                 vim:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 
-                for i, v in all_zen_seeds do
+                for i, v in whitelisted_seeds do
                     local seed = get_tool(v .. " Seed")
                     if seed then 
                         for j = 0, seed:GetAttribute("Quantity") do 
@@ -223,71 +257,46 @@ local function pickup_all_fruits()
     picking_up = false
 end
 
-chat_service:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: plantallseeds, startbotting", Enum.ChatColor.Blue)
-text_chat_service.OnIncomingMessage = function(message)
-    if message.TextSource and message.TextSource.UserId == game.Players.LocalPlayer.UserId then
-        if message.Text:lower() == "plantallseeds" then
-            game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = true
-            for i, v in all_zen_seeds do
-                local seed = get_tool(v .. " Seed")
-                if not seed then continue end
-                
-                for j = 0, seed:GetAttribute("Quantity") do 
-                    place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
-                    wait(0.01)
-                end
-            end
-
-            for i, v in all_seeds do
-                local seed = get_tool(v .. " Seed")
-                if not seed then continue end
-                
-                for j = 0, seed:GetAttribute("Quantity") do 
-                    place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
-                    wait(0.01)
-                end
-            end
-
-            game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
-        elseif message.Text:lower() == "startbotting" then
-            coroutine.wrap(function() 
-                while true do
-                    print("poo dick")
-                    if (tick() - last_shop_buy) > 25 then
-                        last_shop_buy = tick() 
-                        for i, v in all_seeds do
-                            buy_seed(v)
-                        end
-
-                        for i, v in all_event_shop do
-                            buy_event_stock(v)
-                        end
-                    end
+local main_loop = function()
+    if (tick() - last_shop_buy) > 25 then
+        last_shop_buy = tick() 
+        for i, v in all_seeds do
+            buy_seed(v)
+        end
+    end
                     
-                    if (tick() - last_gear_buy) > 25 then
-                        last_gear_buy = tick() 
-                        for i, v in all_gear do
-                            buy_gear(v)
-                        end
-                    end
+    if (tick() - last_gear_buy) > 25 then
+        last_gear_buy = tick() 
+        for i, v in all_gear do
+            buy_gear(v)
+        end
+    end
 
-                    wait(0.1)
-                    open_seed_pack("Zen Seed Pack")
-                    pickup_all_fruits()
+    wait(0.1)
+    open_seed_pack("Gourmet Seed Pack")
+    pickup_all_fruits()
 
-                    if (tick() - last_sell_inventory) > 4 then
-                        submit_all_zen()
-                    end
+    if (tick() - last_sell_inventory) > 22 then
+        last_sell_inventory = tick() 
+        sell_inventory()
+    end
 
-                    if (tick() - last_sell_inventory) > 22 then
-                        submit_all_zen()
-                        last_sell_inventory = tick() 
-                        sell_inventory()
-                    end
+    wait(0.3)
+end
 
-                    wait(0.3)
+chat_service:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: stopbotting, startbotting", Enum.ChatColor.Blue)
+text_chat_service.OnIncomingMessage = function(message)
+    if quit then return end
+    if message.TextSource and message.TextSource.UserId == game.Players.LocalPlayer.UserId then
+        if message.Text:lower() == "startbotting" then
+            do_main_loop = true
+            coroutine.wrap(function() 
+                while do_main_loop do
+                    main_loop()
                 end
             end)()
+        elseif message.Text:lower() == "stopbotting" then
+            do_main_loop = false
         end
     end
 end
