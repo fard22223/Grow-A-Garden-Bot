@@ -100,6 +100,8 @@ local insert = function(connection)
     all_connections[#all_connections + 1] = connection
 end
 
+print("dookie dick")
+
 -- auto update
 coroutine.wrap(function()
     while true do
