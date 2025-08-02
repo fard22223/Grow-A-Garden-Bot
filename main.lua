@@ -1,5 +1,5 @@
 local vim = game:GetService("VirtualInputManager")
-local chat_service = game:GetService("ChatService")
+local chat_service = game:GetService("Chat")
 local all_seeds = {
     "Carrot",
     "Blueberry",
