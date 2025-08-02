@@ -147,6 +147,10 @@ local function buy_seed(seed)
     game.ReplicatedStorage.GameEvents.BuySeedStock:FireServer(seed)
 end
 
+local function buy_event_stock(item)
+    game.ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item)
+end
+
 local function buy_gear(gear)
     game.ReplicatedStorage.GameEvents.BuyGearStock:FireServer(gear)
 end
@@ -253,6 +257,10 @@ text_chat_service.OnIncomingMessage = function(message)
                         last_shop_buy = tick() 
                         for i, v in all_seeds do
                             buy_seed(v)
+                        end
+
+                        for i, v in all_event_shop do
+                            buy_event_stock(v)
                         end
                     end
                     
