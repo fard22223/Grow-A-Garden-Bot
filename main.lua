@@ -200,7 +200,7 @@ text_chat_service.OnIncomingMessage = function(message)
     if message.TextSource and message.TextSource.UserId == game.Players.LocalPlayer.UserId then
         if message.Text:lower() == "plantallseeds" then
             for i, v in all_zen_seeds do
-                local seed = get_tool(seed_name .. " Seed")
+                local seed = get_tool(v .. " Seed")
                 if not seed then continue end
                 
                 for j = 0, seed:GetAttribute("Quantity") do 
@@ -210,7 +210,7 @@ text_chat_service.OnIncomingMessage = function(message)
             end
 
             for i, v in all_seeds do
-                local seed = get_tool(seed_name .. " Seed")
+                local seed = get_tool(v .. " Seed")
                 if not seed then continue end
                 
                 for j = 0, seed:GetAttribute("Quantity") do 
