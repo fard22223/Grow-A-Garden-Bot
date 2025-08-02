@@ -100,7 +100,8 @@ local insert = function(connection)
     all_connections[#all_connections + 1] = connection
 end
 
-local url = "https://raw.githubusercontent.com/fard22223/Grow-A-Garden-Bot/refs/heads/main/main.lua"
+local version_url = "https://raw.githubusercontent.com/fard22223/Grow-A-Garden-Bot/refs/heads/main/version.txt"
+local script_url = "https://raw.githubusercontent.com/fard22223/Grow-A-Garden-Bot/refs/heads/main/main.lua"
 coroutine.wrap(function() 
     while not quit do
         task.wait(5)
