@@ -174,7 +174,10 @@ local function pickup_all_fruits()
                 game.Players.LocalPlayer.Character.Humanoid:MoveTo((prompt.Parent.CFrame * CFrame.new(0, 1, 0)).Position)
                 game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
 
-                fireproximityprompt(prompt)    
+                if math.random(1, 3) == 3 then
+                    fireproximityprompt(prompt)    
+                end
+                
                 for i, v in all_zen_seeds do
                     place_seed(pos, v)
                 end
