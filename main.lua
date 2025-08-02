@@ -108,6 +108,8 @@ local function get_script()
     return nil
 end
 
+print("DOOOKIEEE SHITTT BALSSS")
+
 local old_script = get_script()
 if not old_script then return end
 coroutine.wrap(function()
