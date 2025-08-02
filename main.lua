@@ -196,7 +196,7 @@ end
 
 ChatService:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: plantallseeds, startbotting", Enum.ChatColor.Blue)
 
-LocalPlayer.Chatted:Connect(function(message)
+game.Players.LocalPlayer.Chatted:Connect(function(message)
     if message:lower() == "plantallseeds" then
         for i, v in all_zen_seeds do
             place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
