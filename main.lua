@@ -205,7 +205,6 @@ text_chat_service.OnIncomingMessage = function(message)
                 
                 for j = 0, seed:GetAttribute("Quantity") do 
                     place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
-                    wait(0.005)
                 end
             end
 
@@ -215,7 +214,6 @@ text_chat_service.OnIncomingMessage = function(message)
                 
                 for j = 0, seed:GetAttribute("Quantity") do 
                     place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
-                    wait(0.005)
                 end
             end
         elseif message.Text:lower() == "startbotting" then
