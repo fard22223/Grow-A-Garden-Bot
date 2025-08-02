@@ -199,12 +199,14 @@ chat_service:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: plant
 text_chat_service.OnIncomingMessage = function(message)
     if message.TextSource and message.TextSource.UserId == game.Players.LocalPlayer.UserId then
         if message.Text:lower() == "plantallseeds" then
+            game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = true
             for i, v in all_zen_seeds do
                 local seed = get_tool(v .. " Seed")
                 if not seed then continue end
                 
                 for j = 0, seed:GetAttribute("Quantity") do 
                     place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
+                    wait(0.01)
                 end
             end
 
@@ -214,8 +216,11 @@ text_chat_service.OnIncomingMessage = function(message)
                 
                 for j = 0, seed:GetAttribute("Quantity") do 
                     place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
+                    wait(0.01)
                 end
             end
+
+            game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = false
         elseif message.Text:lower() == "startbotting" then
             coroutine.wrap(function() 
                 while true do
