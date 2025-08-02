@@ -78,6 +78,8 @@ local all_gear = {
 -- Plant_RE = plants a seed, first parameter is the position, second is the seed
 -- BuySeedStock = buys a seed 
 
+local CURRENT_VERSION = "1.0.0"
+
 local current_placeid = game.PlaceId
 local found_farm = nil
 local do_main_loop = false
@@ -99,47 +101,41 @@ local insert = function(connection)
 end
 
 local url = "https://raw.githubusercontent.com/fard22223/Grow-A-Garden-Bot/refs/heads/main/main.lua"
-local function get_script()
-    local success, result = pcall(function()
-        return game:HttpGet(url .. "?t=" .. os.time())
-    end)
-    if success then return result end
-    warn("Failed to fetch script:", result)
-    return nil
-end
-
-print("DOOOKIEEE SHITTT BALSSS")
-
-local old_script = get_script()
-if not old_script then return end
-coroutine.wrap(function()
-    while true do
+coroutine.wrap(function() 
+    while not quit do
         task.wait(5)
+        local success, latest_version = pcall(function()
+            return game:HttpGet(version_url)
+        end)
 
-        local latest_script = get_script()
-        if latest_script and latest_script ~= old_script then
-            print("[Updater] Script changed, updating...")
+        if success and latest_version then
+            latest_version = latest_version:match("[^\r\n]+")
 
-            quit = true
-            do_main_loop = false
+            if latest_version ~= current_version then
+                print("[Updater] New version found:", latest_version)
+        
+                local ok, new_script = pcall(function()
+                    return game:HttpGet(script_url)
+                end)
 
-            for i, v in pairs(all_connections) do
-                if typeof(v) == "RBXScriptConnection" then
-                    v:Disconnect()
+                if ok and new_script then
+                    print("[Updater] Updating")
+
+                    quit = true
+                    do_main_loop = false
+
+                    for i,v in all_connections do 
+                        v:Disconnect()
+                        v = nil
+                    end
+
+                    loadstring(new_script)()
+                else
+                    warn("[Updater] Failed to load updated script.")
                 end
-                all_connections[i] = nil
             end
-
-            local ok, err = pcall(function()
-                loadstring(latest_script)()
-            end)
-
-            if not ok then
-                warn("[Updater] Error loading new script:", err)
-            end
-            break
         else
-            print("[Updater] No update found.")
+            warn("[Updater] it fucking failed somehow")
         end
     end
 end)()
