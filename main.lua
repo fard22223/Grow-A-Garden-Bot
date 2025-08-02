@@ -83,11 +83,11 @@ end)
 local function mouse_click(cf, value)
     if not cf or not value then return end
 
-    game:GetService("VirtualInputManager"):SendMouseButtonEvent(1, 1, 0, true, game, 0)
+    game:GetService("VirtualInputManager"):SendMouseButtonEvent(1, 1, 0, true, game, Enum.UserInputType.MouseButton1)
     game.Players.LocalPlayer.PlayerScripts.InputGateway.Activation:FireServer(cf, value)
     game.Players.LocalPlayer.Character.InputGateway.Activation:FireServer(cf, value)
     wait(0.1)
-    game:GetService("VirtualInputManager"):SendMouseButtonEvent(1, 1, 0, false, game, 0)
+    game:GetService("VirtualInputManager"):SendMouseButtonEvent(1, 1, 0, false, game, Enum.UserInputType.MouseButton1)
 end
 
 local function get_tool(tool_name)
@@ -186,6 +186,7 @@ local function pickup_all_fruits()
                     if seed then 
                         for j = 0, seed:GetAttribute("Quantity") do 
                             place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
+                            wait(0.1)
                         end
                     end
                 end
