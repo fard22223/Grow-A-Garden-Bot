@@ -254,15 +254,18 @@ local delete_non_whitlisted_plants = function()
     for i, v in pairs(found_farm.Important.Plants_Physical:GetChildren()) do
         if not whitelisted_seeds[v.Name] then
             get_tool("Shovel")
-            workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, v.PrimaryPart.Position)
-            click_on_part(v.PrimaryPart)
-            wait(0.1)
+            pcall(function()
+                workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, v.PrimaryPart.Position)
+                click_on_part(v.PrimaryPart)
+            end)
+          
+            wait(0.01)
+
             if whitelisted_seeds[shovel_prompt.ConfirmFrame.FruitName.Text] then
                 click_on_ui(shovel_prompt.ConfirmFrame.Cancel)
                 continue
             end 
             click_on_ui(shovel_prompt.ConfirmFrame.Confirm)
-            wait(0.1)
         end
     end
 
