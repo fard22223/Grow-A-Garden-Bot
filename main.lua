@@ -166,7 +166,7 @@ local function buy_gear(gear)
 end
 
 local function move_cursor_to_part(part)
-    local screen_pos, on_screen = camera:WorldToScreenPoint(targetPart.Position)
+    local screen_pos, on_screen = camera:WorldToScreenPoint(part.Position)
     if not on_screen then return false end
     vim:SendMouseMoveEvent(screen_pos.X, screen_pos.Y, game)
     return true
@@ -279,10 +279,10 @@ text_chat_service.OnIncomingMessage = function(message)
         elseif message.Text:lower() == "deleteallbadplants" then
 
             for i, v in pairs(found_farm.Important.Plants_Physical:GetChildren()) do
-                if not whitelisted_seeds[v.Name] and v:FindFirstChildOfClass("BasePart") then
+                if not whitelisted_seeds[v.Name] then
                     local tool = get_tool("Shovel")
-                    workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, v:FindFirstChildOfClass("BasePart").Position + Vector3.new(math.random(-5, 5), math.random(-2, 2), math.random(-3, 3)))
-                    move_cursor_to_part(v:FindFirstChildOfClass("BasePart"))
+                    workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, v.PrimaryPart.Position + Vector3.new(math.random(-5, 5), math.random(-2, 2), math.random(-3, 3)))
+                    move_cursor_to_part(v.PrimaryPart)
                     tool:Activate()
                     wait()
                     game.ReplicatedStorage.GameEvents.Remove_Item:FireServer(Instance.new("Part", nil))
