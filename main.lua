@@ -199,11 +199,15 @@ text_chat_service.OnIncomingMessage = function(message)
     if message.TextSource and message.TextSource.UserId == game.Players.LocalPlayer.UserId then
         if message:lower() == "plantallseeds" then
             for i, v in all_zen_seeds do
+                print(v)
                 place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
+                wait(0.1)
             end
 
             for i, v in all_seeds do
+                print(v)
                 place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
+                wait(0.1)
             end
         elseif message:lower() == "startbotting" then
             coroutine.wrap(function() 
