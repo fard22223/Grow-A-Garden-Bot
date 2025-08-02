@@ -152,6 +152,7 @@ local function watering_can(pos)
     game.ReplicatedStorage.GameEvents.Water_RE:FireServer(pos + Vector3.new(0, -0.15, 0))
 end
 
+local vim = game:GetService("VirtualInputManager")
 local picking_up = false
 local function pickup_all_fruits()
     if picking_up then return end
@@ -175,14 +176,16 @@ local function pickup_all_fruits()
                 game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
 
                 if math.random(1, 3) == 3 then
-                    fireproximityprompt(prompt)    
+                    -- fireproximityprompt(prompt)    
                 end
                 
                 for i, v in all_zen_seeds do
                     place_seed(pos, v)
                 end
 
+                vim:SendKeyEvent(true, Enum.KeyCode.E, false, game)
                 wait(0.1)
+                vim:SendKeyEvent(false, Enum.KeyCode.E, false, game)
             end
         end       
     end
@@ -190,7 +193,6 @@ local function pickup_all_fruits()
     picking_up = false
 end
 
-local vim = game:GetService("VirtualInputManager")
 while true do
     print("poo dick")
     if (tick() - last_shop_buy) > 25 then
@@ -207,7 +209,7 @@ while true do
         end
     end
 
-    task.wait(0.1)
+    wait(0.1)
     open_seed_pack("Zen Seed Pack")
     pickup_all_fruits()
 
@@ -221,7 +223,5 @@ while true do
         sell_inventory()
     end
 
-    vim:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-    task.wait(0.3)
-    vim:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+    wait(0.3)
 end
