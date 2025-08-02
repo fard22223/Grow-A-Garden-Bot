@@ -78,7 +78,7 @@ local all_gear = {
 -- Plant_RE = plants a seed, first parameter is the position, second is the seed
 -- BuySeedStock = buys a seed 
 
-local CURRENT_VERSION = "1.0.0"
+local CURRENT_VERSION = "1.0.1"
 
 local current_placeid = game.PlaceId
 local found_farm = nil
@@ -95,6 +95,8 @@ local last_advanced_sprinkler = tick()
 local last_master_sprinkler = tick()
 local last_grandmaster_sprinkler = tick()
 local current_tween = nil
+
+print("dingalingfuckingraper")
 
 local insert = function(connection)
     all_connections[#all_connections + 1] = connection
