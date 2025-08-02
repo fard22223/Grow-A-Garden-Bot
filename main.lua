@@ -146,7 +146,7 @@ local function sell_inventory()
 end
 
 local function watering_can(pos)
-    if (tick() - last_water) < 1 then
+    if (tick() - last_water) < 0.25 then
         return
     end
 
