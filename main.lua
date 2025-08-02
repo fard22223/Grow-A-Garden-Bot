@@ -181,12 +181,13 @@ local function pickup_all_fruits()
                 game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
                 vim:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 
-                if math.random(1, 3) == 3 then
-                    -- fireproximityprompt(prompt)    
-                end
-                
                 for i, v in all_zen_seeds do
-                    place_seed(pos, v)
+                    local seed = get_tool(v .. " Seed")
+                    if seed then 
+                        for j = 0, seed:GetAttribute("Quantity") do 
+                            place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
+                        end
+                    end
                 end
             end
         end       
