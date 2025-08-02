@@ -98,7 +98,7 @@ local insert = function(connection)
     all_connections[#all_connections + 1] = connection
 end
 
-local url = "https://raw.githubusercontent.com/yourname/yourrepo/main/script.lua"
+local url = "https://raw.githubusercontent.com/fard22223/Grow-A-Garden-Bot/refs/heads/main/main.lua"
 local function get_script()
     local success, result = pcall(function()
         return game:HttpGet(url .. "?t=" .. os.time())
