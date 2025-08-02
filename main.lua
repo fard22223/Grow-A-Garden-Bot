@@ -82,9 +82,7 @@ end)
 
 local function mouse_click(cf, value)
     if not cf or not value then return end
-    game.Players.LocalPlayer.PlayerScripts.InputGateway.Activation:FireServer(cf, value)
-    game.Players.LocalPlayer.Character.InputGateway.Activation:FireServer(cf, value)
-
+    
     local tool = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
     if tool then
         tool:Activate()
