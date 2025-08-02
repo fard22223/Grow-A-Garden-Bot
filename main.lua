@@ -79,11 +79,14 @@ local all_gear = {
 -- BuySeedStock = buys a seed 
 -- loadstring(game:HttpGet("https://raw.githubusercontent.com/fard22223/Grow-A-Garden-Bot/refs/heads/main/main.lua"))()
 
+local shovel_prompt = game.Players.LocalPlayer.PlayerGui.ShovelPrompt
 local current_placeid = game.PlaceId
 local found_farm = nil
 local do_main_loop = false
 local quit = false 
 local selling_inventory = false
+local cleaning_plants = false
+local last_cleaning_plants = tick()
 local all_connections = {}
 local last_water = tick()
 local last_sell_inventory = tick()
@@ -165,12 +168,25 @@ local function buy_gear(gear)
     game.ReplicatedStorage.GameEvents.BuyGearStock:FireServer(gear)
 end
 
-local function move_cursor_to_part(part)
-    local screen_pos, on_screen = camera:WorldToScreenPoint(part.Position)
-    if not on_screen then return false end
-    vim:SendMouseMoveEvent(screen_pos.X, screen_pos.Y, game)
-    return true
+local function click_on_part(part)
+    local screen_pos, on_screen = workspace.CurrentCamera:WorldToScreenPoint(part.Position)
+    vim:SendMouseButtonEvent(screen_pos.X, screen_pos.Y, 0, true, game, 1)  
+    wait(0.01)
+    vim:SendMouseButtonEvent(screen_pos.X, screen_pos.Y, 0, false, game, 1)  
 end
+
+local function click_on_ui(ui)
+    local abs_pos = ui.AbsolutePosition
+    local abs_size = ui.AbsoluteSize
+
+    local x = abs_pos.X + abs_size.X / 2
+    local y = abs_pos.Y + abs_size.Y / 2
+
+    vim:SendMouseButtonEvent(x, y, 0, true, game, 1)  
+    wait(0.01)
+    vim:SendMouseButtonEvent(x, y, 0, false, game, 1)  
+end
+
 
 local function sell_inventory()
     if selling_inventory then return end
@@ -236,6 +252,28 @@ local function pickup_all_fruits()
     picking_up = false
 end
 
+
+local delete_non_whitlisted_plants = function()
+    if cleaning_plants then return end
+    cleaning_plants = true
+
+    for i, v in pairs(found_farm.Important.Plants_Physical:GetChildren()) do
+        if not whitelisted_seeds[v.Name] then
+            get_tool("Shovel")
+            workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, v.PrimaryPart.Position)
+            click_on_part(v.PrimaryPart)
+            wait(0.05)
+            if whitelisted_seeds[shovel_prompt.FruitName.Text] then
+                click_on_ui(shovel_prompt.Cancel)
+                continue
+            end 
+            click_on_ui(shovel_prompt.Confirm)
+        end
+    end
+
+    cleaning_plants = false
+end
+
 local main_loop = function()
     if (tick() - last_shop_buy) > 25 then
         last_shop_buy = tick() 
@@ -251,6 +289,11 @@ local main_loop = function()
         end
     end
 
+    if (tick() - last_cleaning_plants) > 5 then
+        last_cleaning_plants = tick()
+        delete_non_whitlisted_plants()
+    end
+
     wait(0.1)
     open_seed_pack("Gourmet Seed Pack")
     pickup_all_fruits()
@@ -262,6 +305,7 @@ local main_loop = function()
 
     wait(0.3)
 end
+
 
 chat_service:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: stopbotting, startbotting", Enum.ChatColor.Blue)
 text_chat_service.OnIncomingMessage = function(message)
@@ -277,17 +321,7 @@ text_chat_service.OnIncomingMessage = function(message)
         elseif message.Text:lower() == "stopbotting" then
             do_main_loop = false
         elseif message.Text:lower() == "deleteallbadplants" then
-
-            for i, v in pairs(found_farm.Important.Plants_Physical:GetChildren()) do
-                if not whitelisted_seeds[v.Name] then
-                    local tool = get_tool("Shovel")
-                    workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, v.PrimaryPart.Position + Vector3.new(math.random(-5, 5), math.random(-2, 2), math.random(-3, 3)))
-                    move_cursor_to_part(v.PrimaryPart)
-                    tool:Activate()
-                    wait()
-                    game.ReplicatedStorage.GameEvents.Remove_Item:FireServer(Instance.new("Part", nil))
-                end
-            end
+            delete_non_whitlisted_plants()
         end
     end
 end
