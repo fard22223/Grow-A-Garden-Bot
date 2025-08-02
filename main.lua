@@ -82,12 +82,15 @@ end)
 
 local function mouse_click(cf, value)
     if not cf or not value then return end
-
-    vim:SendMouseButtonEvent(1, 1, 0, true, game, Enum.UserInputType.MouseButton1)
+    pcall(function()
+        vim:SendMouseButtonEvent(1, 1, 0, true, nil, Enum.UserInputType.MouseButton1)
+    end)
     game.Players.LocalPlayer.PlayerScripts.InputGateway.Activation:FireServer(cf, value)
     game.Players.LocalPlayer.Character.InputGateway.Activation:FireServer(cf, value)
     wait(0.1)
-    vim:SendMouseButtonEvent(1, 1, 0, false, game, Enum.UserInputType.MouseButton1)
+    pcall(function()
+        vim:SendMouseButtonEvent(1, 1, 0, false, nil, Enum.UserInputType.MouseButton1)
+    end)
 end
 
 local function get_tool(tool_name)
