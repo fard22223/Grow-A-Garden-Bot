@@ -112,7 +112,7 @@ coroutine.wrap(function()
         if success and latest_version then
             latest_version = latest_version:match("[^\r\n]+")
 
-            if latest_version ~= current_version then
+            if latest_version ~= CURRENT_VERSION then
                 print("[Updater] New version found:", latest_version)
         
                 local ok, new_script = pcall(function()
