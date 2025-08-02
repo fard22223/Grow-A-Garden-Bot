@@ -176,15 +176,9 @@ local function click_on_part(part)
 end
 
 local function click_on_ui(ui)
-    local abs_pos = ui.AbsolutePosition
-    local abs_size = ui.AbsoluteSize
-
-    local x = abs_pos.X + abs_size.X / 2
-    local y = abs_pos.Y + abs_size.Y / 2
-
-    vim:SendMouseButtonEvent(x, y, 0, true, game, 1)  
-    wait(0.01)
-    vim:SendMouseButtonEvent(x, y, 0, false, game, 1)  
+    for _, conn in pairs(getconnections(ui.MouseButton1Click)) do
+        conn:Fire()
+    end  
 end
 
 
@@ -262,12 +256,13 @@ local delete_non_whitlisted_plants = function()
             get_tool("Shovel")
             workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, v.PrimaryPart.Position)
             click_on_part(v.PrimaryPart)
-            wait(0.05)
+            wait(0.1)
             if whitelisted_seeds[shovel_prompt.ConfirmFrame.FruitName.Text] then
                 click_on_ui(shovel_prompt.ConfirmFrame.Cancel)
                 continue
             end 
             click_on_ui(shovel_prompt.ConfirmFrame.Confirm)
+            wait(0.1)
         end
     end
 
