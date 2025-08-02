@@ -94,6 +94,7 @@ local last_master_sprinkler = tick()
 local last_grandmaster_sprinkler = tick()
 local current_tween = nil
 
+local insert = function(connection)
     all_connections[#all_connections + 1] = connection
 end
 
