@@ -77,8 +77,6 @@ local all_gear = {
 -- Water_RE = watering can, first param is position
 -- Plant_RE = plants a seed, first parameter is the position, second is the seed
 -- BuySeedStock = buys a seed 
-local success, err = pcall(function()
-
 
 local url = "https://raw.githubusercontent.com/fard22223/Grow-A-Garden-Bot/refs/heads/main/main.lua"
 local old_script = game:HttpGet(url)
@@ -138,14 +136,6 @@ end
 insert(game.Workspace.Farm.DescendantAdded:Connect(function(dick)
     if dick:IsA("BasePart") then
         dick.CanCollide = false
-    end
-end))
-
--- rejoin on when bullshit happens
-insert(gui_service.OnErrorMessageChanged:Connect(function(error_message)
-    if error_message and error_message ~= "" then
-        wait()
-        teleport_service:Teleport(current_placeid, game.Players.LocalPlayer)
     end
 end))
 
@@ -302,7 +292,3 @@ text_chat_service.OnIncomingMessage = function(message)
         end
     end
 end
-
-end)
-
-print(success, err)
