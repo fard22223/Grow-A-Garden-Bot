@@ -83,11 +83,11 @@ end)
 local function mouse_click(cf, value)
     if not cf or not value then return end
 
-    game:GetService("VirtualInputManager"):SendMouseButtonEvent(1, 1, 0, true, game, Enum.UserInputType.MouseButton1)
+    game:GetService("VirtualInputManager"):SendMouseButtonEvent(1, 1, 0, true, game, Enum.UserInputType.MouseButton1.Value)
     game.Players.LocalPlayer.PlayerScripts.InputGateway.Activation:FireServer(cf, value)
     game.Players.LocalPlayer.Character.InputGateway.Activation:FireServer(cf, value)
     wait(0.1)
-    game:GetService("VirtualInputManager"):SendMouseButtonEvent(1, 1, 0, false, game, Enum.UserInputType.MouseButton1)
+    game:GetService("VirtualInputManager"):SendMouseButtonEvent(1, 1, 0, false, game, Enum.UserInputType.MouseButton1.Value)
 end
 
 local function get_tool(tool_name)
