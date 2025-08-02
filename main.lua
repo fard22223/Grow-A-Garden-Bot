@@ -1,5 +1,6 @@
 local vim = game:GetService("VirtualInputManager")
 local chat_service = game:GetService("Chat")
+local text_chat_service = game:GetService("TextChatService")
 local all_seeds = {
     "Carrot",
     "Blueberry",
@@ -90,7 +91,7 @@ local function mouse_click(cf, value)
 end
 
 local function get_tool(tool_name)
-    local tool 
+    local tool = nil
     for i, v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
         if v:IsA("Tool") and string.find(v.Name, tool_name) then
             tool = v
@@ -197,7 +198,7 @@ end
 chat_service:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: plantallseeds, startbotting", Enum.ChatColor.Blue)
 text_chat_service.OnIncomingMessage = function(message)
     if message.TextSource and message.TextSource.UserId == game.Players.LocalPlayer.UserId then
-        if message:lower() == "plantallseeds" then
+        if message.Text:lower() == "plantallseeds" then
             for i, v in all_zen_seeds do
                 print(v)
                 place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
@@ -209,7 +210,7 @@ text_chat_service.OnIncomingMessage = function(message)
                 place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
                 wait(0.1)
             end
-        elseif message:lower() == "startbotting" then
+        elseif message.Text:lower() == "startbotting" then
             coroutine.wrap(function() 
                 while true do
                     print("poo dick")
