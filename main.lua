@@ -263,11 +263,11 @@ local delete_non_whitlisted_plants = function()
             workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, v.PrimaryPart.Position)
             click_on_part(v.PrimaryPart)
             wait(0.05)
-            if whitelisted_seeds[shovel_prompt.FruitName.Text] then
-                click_on_ui(shovel_prompt.Cancel)
+            if whitelisted_seeds[shovel_prompt.ConfirmFrame.FruitName.Text] then
+                click_on_ui(shovel_prompt.ConfirmFrame.Cancel)
                 continue
             end 
-            click_on_ui(shovel_prompt.Confirm)
+            click_on_ui(shovel_prompt.ConfirmFrame.Confirm)
         end
     end
 
