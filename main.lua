@@ -178,7 +178,7 @@ insert(workspace:GetAttributeChangedSignal("SCRIPT_COUNT"):Connect(function()
     end
 end))
 
-game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 55
+game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 75
 for i, v in pairs(game.Workspace.Farm:GetChildren()) do
     if v.Important.Data.Owner.Value == game.Players.LocalPlayer.Name then
         found_farm = v
