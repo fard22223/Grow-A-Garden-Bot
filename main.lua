@@ -205,35 +205,37 @@ local function mouse_click()
     end
 end
 
-local function get_tool(tool_name, blacklist2)
-    local blacklist = blacklist2 or "FAGGOT"
-    
+local function get_tool(tool_name, is_seed)
     -- Check if already equipped
     for i, v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-        if v:IsA("Tool") and string.find(v.Name, tool_name) and not string.find(v.Name, blacklist) then
-            return v  -- Return immediately!
+        if v:IsA("Tool") then
+            if is_seed and string.find(v.Name, tool_name) or not is_seed and string.find(v.Name, tool_name) and v:GetAttribute("MaxAge") then
+                return v  -- Return immediately!
+            end
         end
     end
 
     -- Check backpack and equip
     for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
         if v:IsA("Tool") and string.find(v.Name, tool_name) and not string.find(v.Name, blacklist) then
-            game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
-            return v  -- Return immediately after equipping!
+            if is_seed and string.find(v.Name, tool_name) or not is_seed and string.find(v.Name, tool_name) and v:GetAttribute("MaxAge") then
+                game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
+                return v  -- Return immediately!
+            end
         end
     end
 
     return nil  -- No tool found
 end
 
-local function get_amount_of_tool(tool_name, blacklist2)
+local function get_amount_of_tool(tool_name, is_seed)
     local count = 0
-    local blacklist = blacklist2 or "FAGGOT"
 
     game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
     for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-        if v:IsA("Tool") and string.find(v.Name, tool_name) and not string.find(v.Name, blacklist)  then
-            count += 1
+            if v:IsA("Tool") and is_seed and string.find(v.Name, tool_name) or v:IsA("Tool") and not is_seed and string.find(v.Name, tool_name) and v:GetAttribute("MaxAge") then
+                count += 1
+            end
         end
     end
 
@@ -248,7 +250,7 @@ local function open_seed_pack(name)
 end
 
 local function place_seed(pos, seed_name)
-    if not get_tool(seed_name .. " Seed") then return end
+    if not get_tool(seed_name .. " Seed", true) then return end
     print(seed_name)
     game.ReplicatedStorage.GameEvents.Plant_RE:FireServer(pos, seed_name)
 end
@@ -285,11 +287,11 @@ end
 local remote = game.ReplicatedStorage.GameEvents.CookingPotService_RE
 
 local function submit(tool, type_, count)
-    local shit = get_tool(tool, type_)
+    local shit = get_tool(tool, false)
     if not shit then return end
     
     for i = 1, count do
-        shit = get_tool(tool, type_)
+        shit = get_tool(tool, false)
         if not shit then break end
         wait(0.1)
         remote:FireServer("SubmitHeldPlant")
@@ -533,7 +535,7 @@ local function pickup_all_fruits()
                     for i, v in whitelisted_seeds do
                         if selling_inventory or quit then break end
                         if math.random(1, 10) == 10 then
-                            local seed = get_tool(v .. " Seed")
+                            local seed = get_tool(v .. " Seed", true)
                             if seed then 
                                 for j = 0, 2 do 
                                     if selling_inventory or quit then break end
