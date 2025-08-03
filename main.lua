@@ -253,9 +253,9 @@ local function buy_seed(seed)
     game.ReplicatedStorage.GameEvents.BuySeedStock:FireServer(seed)
 end
 
-local function buy_traveling_merchant_item(item)
-    game.ReplicatedStorage.GameEvents.BuyTravelingMerchantShopStock:FireServer(item)
-end
+-- local function buy_traveling_merchant_item(item)
+--     game.ReplicatedStorage.GameEvents.BuyTravelingMerchantShopStock:FireServer(item)
+-- end
 
 local function buy_gear(gear)
     game.ReplicatedStorage.GameEvents.BuyGearStock:FireServer(gear)
@@ -466,10 +466,6 @@ end
 
 local function sell_inventory()
     if selling_inventory then return end
-    if current_tween then
-        current_tween:Cancel()
-    end
-
     selling_inventory = true
     game.Players.LocalPlayer.Character.Humanoid:MoveTo(workspace.NPCS.Steven.HumanoidRootPart.Position)
     game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
@@ -531,30 +527,30 @@ local function pickup_all_fruits()
                     end
                 end
 
-                if (tick() - last_basic_sprinkler) > (5 * 60) and math.random(1, 3) == 3 then
-                    last_basic_sprinkler = tick()
-                    sprinkler("Basic Sprinkler", CFrame.new(pos))
-                end
+                -- if (tick() - last_basic_sprinkler) > (5 * 60) and math.random(1, 3) == 3 then
+                --     last_basic_sprinkler = tick()
+                --     sprinkler("Basic Sprinkler", CFrame.new(pos))
+                -- end
 
-                if (tick() - last_advanced_sprinkler) > (5 * 60) and math.random(1, 3) == 3 then
-                    last_advanced_sprinkler = tick()
-                    sprinkler("Advanced Sprinkler", CFrame.new(pos))
-                end
+                -- if (tick() - last_advanced_sprinkler) > (5 * 60) and math.random(1, 3) == 3 then
+                --     last_advanced_sprinkler = tick()
+                --     sprinkler("Advanced Sprinkler", CFrame.new(pos))
+                -- end
 
-                if (tick() - last_godly_sprinkler) > (5 * 60) and math.random(1, 3) == 3 then
-                    last_godly_sprinkler = tick()
-                    sprinkler("Godly Sprinkler", CFrame.new(pos))
-                end
+                -- if (tick() - last_godly_sprinkler) > (5 * 60) and math.random(1, 3) == 3 then
+                --     last_godly_sprinkler = tick()
+                --     sprinkler("Godly Sprinkler", CFrame.new(pos))
+                -- end
 
-                if (tick() - last_master_sprinkler) > (10 * 60) and math.random(1, 3) == 3 then
-                    last_master_sprinkler = tick()
-                    sprinkler("Master Sprinkler", CFrame.new(pos))
-                end
+                -- if (tick() - last_master_sprinkler) > (10 * 60) and math.random(1, 3) == 3 then
+                --     last_master_sprinkler = tick()
+                --     sprinkler("Master Sprinkler", CFrame.new(pos))
+                -- end
 
-                if (tick() - last_grandmaster_sprinkler) > (10 * 60) and math.random(1, 3) == 3 then
-                    last_grandmaster_sprinkler = tick()
-                    sprinkler("Grandmaster Sprinkler", CFrame.new(pos))
-                end
+                -- if (tick() - last_grandmaster_sprinkler) > (10 * 60) and math.random(1, 3) == 3 then
+                --     last_grandmaster_sprinkler = tick()
+                --     sprinkler("Grandmaster Sprinkler", CFrame.new(pos))
+                -- end
             end
         end       
     end
@@ -612,12 +608,12 @@ local main_loop = function()
         end
     end
 
-    if (tick() - last_traveling_merchant_buy) > 25 then
-        last_traveling_merchant_buy = tick()
-        for i, v in all_traveling_merchant_items do
-            buy_traveling_merchant_item(v)
-        end
-    end
+    -- if (tick() - last_traveling_merchant_buy) > 25 then
+    --     last_traveling_merchant_buy = tick()
+    --     for i, v in all_traveling_merchant_items do
+    --         buy_traveling_merchant_item(v)
+    --     end
+    -- end
 
     if (tick() - last_cleaning_plants) > 45 then
         last_cleaning_plants = tick()
@@ -637,11 +633,11 @@ local main_loop = function()
     wait(0.3)
 end
 
+chat_service:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: stopbotting, startbotting, deleteallbadplants", Enum.ChatColor.Blue)
 while do_main_loop do
     main_loop()
 end
 
-chat_service:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: stopbotting, startbotting, deleteallbadplants", Enum.ChatColor.Blue)
 text_chat_service.OnIncomingMessage = function(message)
     if quit then return end
     if message.TextSource and message.TextSource.UserId == game.Players.LocalPlayer.UserId then
