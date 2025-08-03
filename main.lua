@@ -653,5 +653,3 @@ text_chat_service.OnIncomingMessage = function(message)
         end
     end
 end
-
-end)
