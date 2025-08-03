@@ -291,6 +291,7 @@ end
 
 local function cooked_event()
     local craving = CURRENT_CRAVING.Text
+    local selling_inventory = true
 
     if string.find(craving, "Salad") then
         if get_amount_of_tool("Bone Blossom", "Seed") >= 4 and get_amount_of_tool("Tomato", "Seed") >= 1 then
@@ -453,15 +454,12 @@ local function cooked_event()
         end
     end
 
+    selling_inventory = false
     remote:FireServer("CookBest")
 end
 
 local function sell_inventory()
     if selling_inventory then return end
-    if current_tween then
-        current_tween:Cancel()
-    end
-
     selling_inventory = true
     game.Players.LocalPlayer.Character.Humanoid:MoveTo(workspace.NPCS.Steven.HumanoidRootPart.Position)
     game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
@@ -501,7 +499,7 @@ local function pickup_all_fruits()
             prompt.MaxActivationDistance = 100000000000
 
             if prompt.Parent then
-                if selling_inventory or quit then continue end
+                if selling_inventory or quit then break end
 
                 local pos = prompt.Parent.Position
                 pcall(function()
@@ -516,10 +514,13 @@ local function pickup_all_fruits()
 
                 if math.random(1, 3) == 3 then
                     for i, v in whitelisted_seeds do
+                        if selling_inventory or quit then break end
                         if math.random(1, 10) == 10 then
                             local seed = get_tool(v .. " Seed")
                             if seed then 
                                 for j = 0, 2 do 
+                                    if selling_inventory or quit then break end
+
                                     place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
                                     wait(0.1)
                                 end
