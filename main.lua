@@ -649,7 +649,7 @@ local main_loop = function()
         delete_non_whitlisted_plants()
     end
 
-    if (tick() - last_cook_food) > 6 then
+    if (tick() - last_cook_food) > 3 then
         last_cook_food = tick()
         cooked_event()
     end
