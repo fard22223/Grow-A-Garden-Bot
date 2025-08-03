@@ -622,7 +622,6 @@ end
 local main_loop = function()
     if (tick() - last_sell_inventory) > 7 then
         last_sell_inventory = tick() 
-        sell_inventory()
         return
     end
 
@@ -662,13 +661,16 @@ local main_loop = function()
 
     if (tick() - last_cook_food) > 3 then
         last_cook_food = tick()
-        cooked_event()
         return
     end
 
+            sell_inventory()
+            cooked_event()
+                    submit_food()
+
+
     if (tick() - last_submit_food) > 6 then
         last_submit_food = tick()
-        submit_food()
         return
     end
 
