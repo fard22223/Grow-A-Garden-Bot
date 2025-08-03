@@ -474,7 +474,8 @@ local function sell_inventory()
     if selling_inventory then return end
     selling_inventory = true
     game.Players.LocalPlayer.Character.Humanoid:MoveTo(workspace.NPCS.Steven.HumanoidRootPart.Position)
-    wait(10)
+    game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
+    wait(0.1)
     game.ReplicatedStorage.GameEvents.Sell_Inventory:FireServer()
     wait(0.2)
     selling_inventory = false
