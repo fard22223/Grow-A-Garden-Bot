@@ -4,6 +4,8 @@ local text_chat_service = game:GetService("TextChatService")
 local teleport_service = game:GetService("TeleportService")
 local gui_service = game:GetService("GuiService")
 
+local success, err = pcall(function()
+
 local all_seeds = {
     "Carrot",
     "Blueberry",
@@ -203,7 +205,8 @@ local function mouse_click()
     end
 end
 
-local function get_tool(tool_name, blacklist)
+local function get_tool(tool_name, blacklist2)
+    local blacklist = blacklist2 or "FAGGOT"
     local tool = nil
     for i, v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
         if v:IsA("Tool") and string.find(v.Name, tool_name) and not string.find(v.Name, blacklist) then
@@ -221,8 +224,9 @@ local function get_tool(tool_name, blacklist)
     return tool
 end
 
-local function get_amount_of_tool(tool_name, blacklist)
+local function get_amount_of_tool(tool_name, blacklist2)
     local count = 0
+    local blacklist = blacklist2 or "FAGGOT"
 
     game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
     for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
@@ -446,7 +450,7 @@ local function cooked_event()
             submit("Sugar Apple", "Seed", 2)
             submit("Corn", "Seed", 2)
         elseif (get_amount_of_tool("Kiwi", "Seed") >= 2 and get_amount_of_tool("Banana", "Seed") >= 2)
-           or (get_amount_of_tool("Blueberry", "Seed") >= 1 and get_amount_of_tool("Grape", "Seed") >= 1 and get_amount_of_tool("Apple", "Seed") >= 1 and get_amount_of_tool("Corn", "Seed") >=1) then
+           or (get_amount_of_tool("Blueberry", "Seed") >= 1 and get_amount_of_tool("Grape", "Seed") >= 1 and get_amount_of_tool("Apple", "Seed") >= 1 and get_amount_of_tool("Corn", "Seed") >= 1) then
             if get_amount_of_tool("Kiwi", "Seed")>=2 then
                 submit("Kiwi","Seed",2)
                 submit("Banana","Seed",2)
@@ -468,6 +472,7 @@ local function sell_inventory()
         current_tween:Cancel()
     end
 
+    selling_inventory = true
     game.Players.LocalPlayer.Character.Humanoid:MoveTo(workspace.NPCS.Steven.HumanoidRootPart.Position)
     game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
     game.ReplicatedStorage.GameEvents.Sell_Inventory:FireServer()
@@ -658,3 +663,7 @@ text_chat_service.OnIncomingMessage = function(message)
         end
     end
 end
+
+end)
+
+print(success, err)
