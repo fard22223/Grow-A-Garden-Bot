@@ -512,7 +512,7 @@ local function pickup_all_fruits()
     for _, prompt in ipairs(found_farm.Important:GetDescendants()) do
         if prompt:IsA("ProximityPrompt") and prompt.Parent and prompt.Parent:IsA("BasePart") then
             if quit then break end
-            if math.random(1, 10) ~= 10 then continue end
+            if math.random(1, 25) ~= 25 then continue end
             prompt.Enabled = true
             prompt.RequiresLineOfSight = false
             prompt.MaxActivationDistance = 100000000000
