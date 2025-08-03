@@ -437,7 +437,7 @@ local delete_non_whitlisted_plants = function()
     cleaning_plants = true
 
     for i, v in pairs(found_farm.Important.Plants_Physical:GetChildren()) do
-        if quit then break end
+        if quit or math.random(1, 7) == 7 then break end
 
         if not whitelisted_seeds[v.Name] then
             get_tool("Shovel")
