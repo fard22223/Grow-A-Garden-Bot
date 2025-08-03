@@ -236,7 +236,6 @@ local function get_amount_of_tool(tool_name, is_seed)
             if v:IsA("Tool") and is_seed and string.find(v.Name, tool_name) or v:IsA("Tool") and not is_seed and string.find(v.Name, tool_name) and v:GetAttribute("MaxAge") then
                 count += 1
             end
-        end
     end
 
     return count
