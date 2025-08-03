@@ -648,23 +648,26 @@ local main_loop = function()
         delete_non_whitlisted_plants()
     end
 
-    if (tick() - last_cook_food) > 10 then
+    if (tick() - last_cook_food) > 6 then
         last_cook_food = tick()
         cooked_event()
     end
 
-    if (tick() - last_submit_food) > 10 then
+    if (tick() - last_submit_food) > 6 then
         last_submit_food = tick()
         submit_food()
     end
 
     wait(0.1)
     open_seed_pack("Gourmet Seed Pack")
-    pickup_all_fruits()
 
-    if (tick() - last_sell_inventory) > 22 then
+    if (tick() - last_sell_inventory) > 7 then
         last_sell_inventory = tick() 
         sell_inventory()
+    end
+
+    if not selling_inventory then
+        pickup_all_fruits()
     end
 
     wait(0.3)
