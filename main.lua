@@ -507,22 +507,25 @@ local function pickup_all_fruits()
                 pcall(function()
                     watering_can(pos)
                 end)
+                
                 workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, pos)
                 game.Players.LocalPlayer.Character.Humanoid:MoveTo((prompt.Parent.CFrame * CFrame.new(0, 1, 0)).Position)
                 vim:SendKeyEvent(true, Enum.KeyCode.E, false, game)
                 game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
                 vim:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 
-                for i, v in whitelisted_seeds do
-                    local seed = get_tool(v .. " Seed")
-                    if seed then 
-                        for j = 0, seed:GetAttribute("Quantity") do 
-                            place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
-                            wait(0.1)
+                if math.random(1, 3) == 3 then
+                    for i, v in whitelisted_seeds do
+                        local seed = get_tool(v .. " Seed")
+                        if seed then 
+                            for j = 0, 2 do 
+                                place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
+                                wait(0.1)
+                            end
                         end
                     end
                 end
-
+        
                 if (tick() - last_basic_sprinkler) > (5 * 60) and math.random(1, 3) == 3 then
                     last_basic_sprinkler = tick()
                     sprinkler("Basic Sprinkler", CFrame.new(pos))
