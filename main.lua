@@ -476,6 +476,7 @@ local function cooked_event()
 end
 
 local function sell_inventory()
+    if selling_inventory then return end
     selling_inventory = true
     game.Players.LocalPlayer.Character.Humanoid:MoveTo(workspace.NPCS.Steven.HumanoidRootPart.Position)
     game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
@@ -505,7 +506,7 @@ end
 
 local picking_up = false
 local function pickup_all_fruits()
-    if picking_up then return end
+    if picking_up or selling_inventory then return end
     picking_up = true
 
     for _, prompt in ipairs(found_farm.Important:GetDescendants()) do
@@ -622,6 +623,7 @@ local main_loop = function()
     if (tick() - last_sell_inventory) > 7 then
         last_sell_inventory = tick() 
         sell_inventory()
+        return
     end
 
     if (tick() - last_shop_buy) > 25 then
@@ -655,16 +657,19 @@ local main_loop = function()
     if (tick() - last_cleaning_plants) > 45 then
         last_cleaning_plants = tick()
         delete_non_whitlisted_plants()
+        return
     end
 
     if (tick() - last_cook_food) > 3 then
         last_cook_food = tick()
         cooked_event()
+        return
     end
 
     if (tick() - last_submit_food) > 6 then
         last_submit_food = tick()
         submit_food()
+        return
     end
 
     wait(0.1)
@@ -673,6 +678,7 @@ local main_loop = function()
 
     if not selling_inventory then
         pickup_all_fruits()
+        return
     end
 
     wait(0.3)
