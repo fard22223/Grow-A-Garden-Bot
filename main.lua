@@ -476,7 +476,6 @@ local function cooked_event()
 end
 
 local function sell_inventory()
-    if selling_inventory then return end
     selling_inventory = true
     game.Players.LocalPlayer.Character.Humanoid:MoveTo(workspace.NPCS.Steven.HumanoidRootPart.Position)
     game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
@@ -530,7 +529,7 @@ local function pickup_all_fruits()
                 game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
                 vim:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 
-                if math.random(1, 3) == 3 then
+                if math.random(1, 25) == 25 then
                     for i, v in whitelisted_seeds do
                         if selling_inventory or quit then break end
                         if math.random(1, 10) == 10 then
@@ -620,7 +619,11 @@ local function submit_food()
 end
 
 local main_loop = function()
-    game.ReplicatedStorage.GameEvents.SubmitFoodService_RE:FireServer("")
+    if (tick() - last_sell_inventory) > 7 then
+        last_sell_inventory = tick() 
+        sell_inventory()
+    end
+
     if (tick() - last_shop_buy) > 25 then
         last_shop_buy = tick() 
         for i, v in all_seeds do
@@ -667,10 +670,6 @@ local main_loop = function()
     wait(0.1)
     open_seed_pack("Gourmet Seed Pack")
 
-    if (tick() - last_sell_inventory) > 7 then
-        last_sell_inventory = tick() 
-        sell_inventory()
-    end
 
     if not selling_inventory then
         pickup_all_fruits()
