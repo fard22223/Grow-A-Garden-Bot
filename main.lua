@@ -207,21 +207,23 @@ end
 
 local function get_tool(tool_name, blacklist2)
     local blacklist = blacklist2 or "FAGGOT"
-    local tool = nil
+    
+    -- Check if already equipped
     for i, v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
         if v:IsA("Tool") and string.find(v.Name, tool_name) and not string.find(v.Name, blacklist) then
-            tool = v
+            return v  -- Return immediately!
         end
     end
 
+    -- Check backpack and equip
     for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-        if v:IsA("Tool") and string.find(v.Name, tool_name) and not string.find(v.Name, blacklist)  then
+        if v:IsA("Tool") and string.find(v.Name, tool_name) and not string.find(v.Name, blacklist) then
             game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
-            tool = v
+            return v  -- Return immediately after equipping!
         end
     end
 
-    return tool
+    return nil  -- No tool found
 end
 
 local function get_amount_of_tool(tool_name, blacklist2)
@@ -284,7 +286,7 @@ local remote = game.ReplicatedStorage.GameEvents.CookingPotService_RE
 
 local function submit(tool, type_, count)
     local shit = get_tool(tool, type_)
-    if not shit then continue end
+    if not shit then return end
     
     for i = 1, count do
         shit = get_tool(tool, type_)
