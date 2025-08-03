@@ -283,9 +283,9 @@ local remote = game.ReplicatedStorage.GameEvents.CookingPotService_RE
 local function submit(tool, type_, count)
     for i = 1, count do
         get_tool(tool, type_)
-        wait(0.1)
+        wait(0.35)
         remote:FireServer("SubmitHeldPlant")
-        wait(0.1)
+        wait(0.35)
     end
 end
 
