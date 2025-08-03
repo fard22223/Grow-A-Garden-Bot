@@ -4,8 +4,6 @@ local text_chat_service = game:GetService("TextChatService")
 local teleport_service = game:GetService("TeleportService")
 local gui_service = game:GetService("GuiService")
 
-local success, err = pcall(function()
-
 local all_seeds = {
     "Carrot",
     "Blueberry",
@@ -639,11 +637,9 @@ local main_loop = function()
     wait(0.3)
 end
 
-coroutine.wrap(function() 
-    while do_main_loop do
-        main_loop()
-    end
-end)()
+while do_main_loop do
+    main_loop()
+end
 
 chat_service:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: stopbotting, startbotting, deleteallbadplants", Enum.ChatColor.Blue)
 text_chat_service.OnIncomingMessage = function(message)
@@ -663,9 +659,3 @@ text_chat_service.OnIncomingMessage = function(message)
         end
     end
 end
-
-end)
-
-print(success, err)
-warn(success, err)
-error(success, err)
