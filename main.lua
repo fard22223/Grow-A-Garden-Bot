@@ -285,9 +285,9 @@ local remote = game.ReplicatedStorage.GameEvents.CookingPotService_RE
 local function submit(tool, type_, count)
     for i = 1, count do
         get_tool(tool, type_)
-        wait(0.35)
+        wait(0.1)
         remote:FireServer("SubmitHeldPlant")
-        wait(0.35)
+        wait(0.1)
     end
 end
 
@@ -297,12 +297,10 @@ local function cooked_event()
     selling_inventory = true
 
     local num = math.random(1, 4)
-    if num == 1 then
-        submit("Giant Pinecone", "Seed", 5)
-    elseif num == 2 then
-        submit("Sugar Apple", "Seed", 5)
-    elseif num == 3 then
-        submit("Elder Strawberry", "Seed", 5)
+    if num < 4 then
+        for i, v in whitelisted_seeds do
+            submit(v, "Seed", 10)
+        end
     elseif num == 4 then
         if string.find(craving, "Salad") then
                 if get_amount_of_tool("Bone Blossom", "Seed") >= 4 and get_amount_of_tool("Tomato", "Seed") >= 1 then
