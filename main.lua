@@ -217,7 +217,7 @@ local function get_tool(tool_name, is_seed)
 
     -- Check backpack and equip
     for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-        if v:IsA("Tool") and string.find(v.Name, tool_name) and not string.find(v.Name, blacklist) then
+        if v:IsA("Tool") and string.find(v.Name, tool_name) then
             if is_seed and string.find(v.Name, tool_name) or not is_seed and string.find(v.Name, tool_name) and v:GetAttribute("MaxAge") then
                 game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
                 return v  -- Return immediately!
