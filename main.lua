@@ -667,3 +667,5 @@ end
 end)
 
 print(success, err)
+warn(success, err)
+error(success, err)
