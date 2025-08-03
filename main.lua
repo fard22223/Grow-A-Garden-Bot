@@ -662,7 +662,7 @@ local main_loop = function()
     wait(0.1)
     open_seed_pack("Gourmet Seed Pack")
 
-    if (tick() - last_sell_inventory) > 55 then
+    if (tick() - last_sell_inventory) > 7 then
         last_sell_inventory = tick() 
         sell_inventory()
     end
