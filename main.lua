@@ -474,6 +474,19 @@ local function cooked_event()
     remote:FireServer("CookBest")
 end
 
+local function submit_food()
+    if selling_inventory then return end
+    selling_inventory = true
+    game.ReplicatedStorage.GameEvents.CookingPotService_RE:FireServer("GetFoodFromPot")
+    wait(2)
+    local food = get_tool("Soup") or get_tool("Cake") or get_tool("Burger") or get_tool("Sushi") or get_tool("Pizza") or get_tool("Donut") or get_tool("Ice Cream") or get_tool("Hot Dog") or get_tool("Waffle") or get_tool("Pie") or get_tool("Sandwich") or get_tool("Salad")
+    wait(1)
+    game.ReplicatedStorage.GameEvents.SubmitFoodService_RE:FireServer("SubmitHeldFood")
+    wait(0.25)
+
+    selling_inventory = false
+end
+
 local function sell_inventory()
     if selling_inventory then return end
     selling_inventory = true
@@ -610,19 +623,6 @@ local delete_non_whitlisted_plants = function()
     cleaning_plants = false
 end
 
-local function submit_food()
-    if selling_inventory then return end
-    selling_inventory = true
-    game.ReplicatedStorage.GameEvents.CookingPotService_RE:FireServer("GetFoodFromPot")
-    wait(2)
-    local food = get_tool("Soup") or get_tool("Cake") or get_tool("Burger") or get_tool("Sushi") or get_tool("Pizza") or get_tool("Donut") or get_tool("Ice Cream") or get_tool("Hot Dog") or get_tool("Waffle") or get_tool("Pie") or get_tool("Sandwich") or get_tool("Salad")
-    wait(1)
-    game.ReplicatedStorage.GameEvents.SubmitFoodService_RE:FireServer("SubmitHeldFood")
-    wait(0.25)
-
-    selling_inventory = false
-end
-
 local main_loop = function()
     print((tick() - last_sell_inventory), " ", selling_inventory)
     if (tick() - last_sell_inventory) > 7 then
@@ -669,10 +669,9 @@ local main_loop = function()
         return
     end
 
-            sell_inventory()
-            cooked_event()
-                    submit_food()
-
+    cooked_event()
+    submit_food()
+    sell_inventory()
 
     if (tick() - last_submit_food) > 6 then
         last_submit_food = tick()
