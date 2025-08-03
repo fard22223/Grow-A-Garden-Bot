@@ -178,7 +178,7 @@ insert(workspace:GetAttributeChangedSignal("SCRIPT_COUNT"):Connect(function()
     end
 end))
 
-game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 25
+game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 55
 for i, v in pairs(game.Workspace.Farm:GetChildren()) do
     if v.Important.Data.Owner.Value == game.Players.LocalPlayer.Name then
         found_farm = v
@@ -293,6 +293,7 @@ end
 
 local function cooked_event()
     local craving = CURRENT_CRAVING.Text
+    if selling_inventory then return end
     selling_inventory = true
 
     local num = math.random(1, 4)
@@ -600,6 +601,7 @@ local delete_non_whitlisted_plants = function()
 end
 
 local function submit_food()
+    if selling_inventory then return end
     selling_inventory = true
     game.ReplicatedStorage.GameEvents.CookingPotService_RE:FireServer("GetFoodFromPot")
     wait(2)
