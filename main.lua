@@ -675,16 +675,14 @@ local main_loop = function()
         return
     end
 
-    wait(0.1)
     open_seed_pack("Gourmet Seed Pack")
-
 
     if not selling_inventory then
         pickup_all_fruits()
         return
     end
 
-    wait(0.3)
+    wait()
 end
 
 coroutine.wrap(function() 
