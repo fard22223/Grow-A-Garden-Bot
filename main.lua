@@ -79,7 +79,7 @@ local whitelisted_seeds = {
     "Pepper",
     "Cacao",
     "Feijoa",
-    "Tomato"
+    "Tomato",
     "Pitcher Plant",
     "Grand Volcania",
     "Sunflower",
@@ -104,7 +104,7 @@ local whitelisted_seeds = {
     "Grand Tomato",
     "Fossilight",
     "Taco Fern",
-    "Sugarglaze"
+    "Sugarglaze",
     "Strawberry",
     "Coconut",
     "Mango",
