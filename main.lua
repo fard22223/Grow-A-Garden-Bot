@@ -477,6 +477,10 @@ end
 local function sell_inventory()
     if selling_inventory then return end
     selling_inventory = true
+
+    cooked_event()
+    submit_food()
+
     game.Players.LocalPlayer.Character.Humanoid:MoveTo(workspace.NPCS.Steven.HumanoidRootPart.Position)
     game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
     wait(0.1)
@@ -511,7 +515,7 @@ local function pickup_all_fruits()
     for _, prompt in ipairs(found_farm.Important:GetDescendants()) do
         if prompt:IsA("ProximityPrompt") and prompt.Parent and prompt.Parent:IsA("BasePart") then
             if quit then break end
-            if math.random(1, 555) ~= 555 then continue end
+            if math.random(1, 325) ~= 325 then continue end
             prompt.Enabled = true
             prompt.RequiresLineOfSight = false
             prompt.MaxActivationDistance = 100000000000
