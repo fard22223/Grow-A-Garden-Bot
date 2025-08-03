@@ -157,24 +157,24 @@ local insert = function(connection)
 end
 
 -- incase i update the script while ingame. shuts this shit down
-local current_version = 1
-if workspace:GetAttribute("SCRIPT_COUNT") then
-    workspace:SetAttribute("SCRIPT_COUNT", workspace:GetAttribute("SCRIPT_COUNT") + 1)
-    current_version = workspace:GetAttribute("SCRIPT_COUNT")
-else
-    workspace:SetAttribute("SCRIPT_COUNT", current_version)
-end
+-- local current_version = 1
+-- if workspace:GetAttribute("SCRIPT_COUNT") then
+--     workspace:SetAttribute("SCRIPT_COUNT", workspace:GetAttribute("SCRIPT_COUNT") + 1)
+--     current_version = workspace:GetAttribute("SCRIPT_COUNT")
+-- else
+--     workspace:SetAttribute("SCRIPT_COUNT", current_version)
+-- end
 
-insert(workspace:GetAttributeChangedSignal("SCRIPT_COUNT"):Connect(function()
-    if workspace:GetAttribute("SCRIPT_COUNT") ~= current_version then
-        do_main_loop = false
-        quit = true
-        for i, v in all_connections do
-            v:Disconnect()
-            v = nil
-        end
-    end
-end))
+-- insert(workspace:GetAttributeChangedSignal("SCRIPT_COUNT"):Connect(function()
+--     if workspace:GetAttribute("SCRIPT_COUNT") ~= current_version then
+--         do_main_loop = false
+--         quit = true
+--         for i, v in all_connections do
+--             v:Disconnect()
+--             v = nil
+--         end
+--     end
+-- end))
 
 game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 25
 for i, v in pairs(game.Workspace.Farm:GetChildren()) do
@@ -222,19 +222,19 @@ local function get_tool(tool_name, blacklist2)
     return tool
 end
 
-local function get_amount_of_tool(tool_name, blacklist2)
-    local count = 0
-    local blacklist = blacklist2 or "FAGGOT"
+-- local function get_amount_of_tool(tool_name, blacklist2)
+--     local count = 0
+--     local blacklist = blacklist2 or "FAGGOT"
 
-    game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
-    for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-        if v:IsA("Tool") and string.find(v.Name, tool_name) and not string.find(v.Name, blacklist)  then
-            count += 1
-        end
-    end
+--     game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
+--     for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+--         if v:IsA("Tool") and string.find(v.Name, tool_name) and not string.find(v.Name, blacklist)  then
+--             count += 1
+--         end
+--     end
 
-    return count
-end
+--     return count
+-- end
 
 local function open_seed_pack(name)
     local tool = get_tool(name)
@@ -278,190 +278,190 @@ local function click_on_ui(ui)
     end  
 end
 
-local remote = game.ReplicatedStorage.GameEvents.CookingPotService_RE
+-- local remote = game.ReplicatedStorage.GameEvents.CookingPotService_RE
 
 local function submit(tool, type_, count)
-    for i = 1, count do
-        get_tool(tool, type_)
-        wait(0.1)
-        remote:FireServer("SubmitHeldPlant")
-        wait(0.1)
-    end
+    -- for i = 1, count do
+    --     get_tool(tool, type_)
+    --     wait(0.1)
+    --     remote:FireServer("SubmitHeldPlant")
+    --     wait(0.1)
+    -- end
 end
 
 local function cooked_event()
-    local craving = CURRENT_CRAVING.Text
+    -- local craving = CURRENT_CRAVING.Text
 
-    if string.find(craving, "Salad") then
-        if get_amount_of_tool("Bone Blossom", "Seed") >= 4 and get_amount_of_tool("Tomato", "Seed") >= 1 then
-            submit("Bone Blossom", "Seed", 4)
-            submit("Tomato", "Seed", 1)
-        elseif get_amount_of_tool("Sugar Apple", "Seed") >= 3 and get_amount_of_tool("Pepper", "Seed") >= 1 and get_amount_of_tool("Pineapple", "Seed") >= 1 then
-            submit("Sugar Apple", "Seed", 3)
-            submit("Pepper", "Seed", 1)
-            submit("Pineapple", "Seed", 1)
-        elseif get_amount_of_tool("Giant Pinecone", "Seed") >= 1 and get_amount_of_tool("Tomato", "Seed") >= 1 then
-            submit("Giant Pinecone", "Seed", 1)
-            submit("Tomato", "Seed", 1)
-        elseif get_amount_of_tool("Tomato", "Seed") >= 2 then
-            submit("Tomato", "Seed", 2)
-        end
+    -- if string.find(craving, "Salad") then
+    --     if get_amount_of_tool("Bone Blossom", "Seed") >= 4 and get_amount_of_tool("Tomato", "Seed") >= 1 then
+    --         submit("Bone Blossom", "Seed", 4)
+    --         submit("Tomato", "Seed", 1)
+    --     elseif get_amount_of_tool("Sugar Apple", "Seed") >= 3 and get_amount_of_tool("Pepper", "Seed") >= 1 and get_amount_of_tool("Pineapple", "Seed") >= 1 then
+    --         submit("Sugar Apple", "Seed", 3)
+    --         submit("Pepper", "Seed", 1)
+    --         submit("Pineapple", "Seed", 1)
+    --     elseif get_amount_of_tool("Giant Pinecone", "Seed") >= 1 and get_amount_of_tool("Tomato", "Seed") >= 1 then
+    --         submit("Giant Pinecone", "Seed", 1)
+    --         submit("Tomato", "Seed", 1)
+    --     elseif get_amount_of_tool("Tomato", "Seed") >= 2 then
+    --         submit("Tomato", "Seed", 2)
+    --     end
 
-    elseif string.find(craving, "Sandwich") then
-        if get_amount_of_tool("Tomato", "Seed") >= 2 and get_amount_of_tool("Corn", "Seed") >= 1 then
-            submit("Tomato", "Seed", 2)
-            submit("Corn", "Seed", 1)
-        end
+    -- elseif string.find(craving, "Sandwich") then
+    --     if get_amount_of_tool("Tomato", "Seed") >= 2 and get_amount_of_tool("Corn", "Seed") >= 1 then
+    --         submit("Tomato", "Seed", 2)
+    --         submit("Corn", "Seed", 1)
+    --     end
 
-    elseif string.find(craving, "Pie") then
-        if get_amount_of_tool("Bone Blossom", "Seed") >= 4 and get_amount_of_tool("Pumpkin", "Seed") >= 1 then
-            submit("Bone Blossom", "Seed", 4)
-            submit("Pumpkin", "Seed", 1)
-        elseif get_amount_of_tool("Corn", "Seed") >= 1 and get_amount_of_tool("Coconut", "Seed") >= 3 and get_amount_of_tool("Mango", "Seed") >= 1 then
-            submit("Corn", "Seed", 1)
-            submit("Coconut", "Seed", 3)
-            submit("Mango", "Seed", 1)
-        elseif get_amount_of_tool("Corn", "Seed") >= 1 and get_amount_of_tool("Coconut", "Seed") >= 1 then
-            submit("Corn", "Seed", 1)
-            submit("Coconut", "Seed", 1)
-        elseif get_amount_of_tool("Pumpkin", "Seed") >= 1 and get_amount_of_tool("Apple", "Seed") >= 1 then
-            submit("Pumpkin", "Seed", 1)
-            submit("Apple", "Seed", 1)
-        end
+    -- elseif string.find(craving, "Pie") then
+    --     if get_amount_of_tool("Bone Blossom", "Seed") >= 4 and get_amount_of_tool("Pumpkin", "Seed") >= 1 then
+    --         submit("Bone Blossom", "Seed", 4)
+    --         submit("Pumpkin", "Seed", 1)
+    --     elseif get_amount_of_tool("Corn", "Seed") >= 1 and get_amount_of_tool("Coconut", "Seed") >= 3 and get_amount_of_tool("Mango", "Seed") >= 1 then
+    --         submit("Corn", "Seed", 1)
+    --         submit("Coconut", "Seed", 3)
+    --         submit("Mango", "Seed", 1)
+    --     elseif get_amount_of_tool("Corn", "Seed") >= 1 and get_amount_of_tool("Coconut", "Seed") >= 1 then
+    --         submit("Corn", "Seed", 1)
+    --         submit("Coconut", "Seed", 1)
+    --     elseif get_amount_of_tool("Pumpkin", "Seed") >= 1 and get_amount_of_tool("Apple", "Seed") >= 1 then
+    --         submit("Pumpkin", "Seed", 1)
+    --         submit("Apple", "Seed", 1)
+    --     end
 
-    elseif string.find(craving, "Waffle") then
-        if get_amount_of_tool("Sugar Apple", "Seed") >= 1 and get_amount_of_tool("Coconut", "Seed") >= 1 then
-            submit("Sugar Apple", "Seed", 1)
-            submit("Coconut", "Seed", 1)
-        elseif (get_amount_of_tool("Tranquil Bloom", "Seed") >=1 and get_amount_of_tool("Starfruit", "Seed") >=1 and get_amount_of_tool("Coconut", "Seed")>=1)
-           or (get_amount_of_tool("Pumpkin", "Seed") >=1 and get_amount_of_tool("Watermelon", "Seed") >=1)
-           or (get_amount_of_tool("Pumpkin", "Seed") >=1 and get_amount_of_tool("Sugar Apple", "Seed") >=1) then
-            if get_amount_of_tool("Tranquil Bloom", "Seed")>=1 then
-                submit("Tranquil Bloom", "Seed",1)
-                submit("Starfruit", "Seed",1)
-                submit("Coconut", "Seed",1)
-            elseif get_amount_of_tool("Pumpkin", "Seed")>=1 then
-                submit("Pumpkin", "Seed",1)
-                if get_amount_of_tool("Watermelon","Seed")>=1 then
-                    submit("Watermelon","Seed",1)
-                else
-                    submit("Sugar Apple","Seed",1)
-                end
-            end
-        end
+    -- elseif string.find(craving, "Waffle") then
+    --     if get_amount_of_tool("Sugar Apple", "Seed") >= 1 and get_amount_of_tool("Coconut", "Seed") >= 1 then
+    --         submit("Sugar Apple", "Seed", 1)
+    --         submit("Coconut", "Seed", 1)
+    --     elseif (get_amount_of_tool("Tranquil Bloom", "Seed") >=1 and get_amount_of_tool("Starfruit", "Seed") >=1 and get_amount_of_tool("Coconut", "Seed")>=1)
+    --        or (get_amount_of_tool("Pumpkin", "Seed") >=1 and get_amount_of_tool("Watermelon", "Seed") >=1)
+    --        or (get_amount_of_tool("Pumpkin", "Seed") >=1 and get_amount_of_tool("Sugar Apple", "Seed") >=1) then
+    --         if get_amount_of_tool("Tranquil Bloom", "Seed")>=1 then
+    --             submit("Tranquil Bloom", "Seed",1)
+    --             submit("Starfruit", "Seed",1)
+    --             submit("Coconut", "Seed",1)
+    --         elseif get_amount_of_tool("Pumpkin", "Seed")>=1 then
+    --             submit("Pumpkin", "Seed",1)
+    --             if get_amount_of_tool("Watermelon","Seed")>=1 then
+    --                 submit("Watermelon","Seed",1)
+    --             else
+    --                 submit("Sugar Apple","Seed",1)
+    --             end
+    --         end
+    --     end
 
-    elseif string.find(craving, "Hot Dog") then
-        if get_amount_of_tool("Bone Blossom", "Seed") >= 4 and get_amount_of_tool("Corn", "Seed") >= 1 then
-            submit("Bone Blossom", "Seed", 4)
-            submit("Corn", "Seed", 1)
-        elseif get_amount_of_tool("Ember Lily", "Seed") >= 4 and get_amount_of_tool("Corn", "Seed") >= 1 then
-            submit("Ember Lily", "Seed", 4)
-            submit("Corn", "Seed", 1)
-        elseif get_amount_of_tool("Corn", "Seed") >= 1 and get_amount_of_tool("Ember Lily", "Seed") >= 1 then
-            submit("Corn", "Seed", 1)
-            submit("Ember Lily", "Seed", 1)
-        elseif get_amount_of_tool("Pepper", "Seed") >= 1 and get_amount_of_tool("Corn", "Seed") >= 1 then
-            submit("Pepper", "Seed", 1)
-            submit("Corn", "Seed", 1)
-        end
+    -- elseif string.find(craving, "Hot Dog") then
+    --     if get_amount_of_tool("Bone Blossom", "Seed") >= 4 and get_amount_of_tool("Corn", "Seed") >= 1 then
+    --         submit("Bone Blossom", "Seed", 4)
+    --         submit("Corn", "Seed", 1)
+    --     elseif get_amount_of_tool("Ember Lily", "Seed") >= 4 and get_amount_of_tool("Corn", "Seed") >= 1 then
+    --         submit("Ember Lily", "Seed", 4)
+    --         submit("Corn", "Seed", 1)
+    --     elseif get_amount_of_tool("Corn", "Seed") >= 1 and get_amount_of_tool("Ember Lily", "Seed") >= 1 then
+    --         submit("Corn", "Seed", 1)
+    --         submit("Ember Lily", "Seed", 1)
+    --     elseif get_amount_of_tool("Pepper", "Seed") >= 1 and get_amount_of_tool("Corn", "Seed") >= 1 then
+    --         submit("Pepper", "Seed", 1)
+    --         submit("Corn", "Seed", 1)
+    --     end
 
-    elseif string.find(craving, "Ice Cream") then
-        if get_amount_of_tool("Banana", "Seed") >= 1 and get_amount_of_tool("Sugar Apple", "Seed") >= 1 and get_amount_of_tool("Bone Blossom", "Seed") >= 3 then
-            submit("Banana", "Seed", 1)
-            submit("Sugar Apple", "Seed", 1)
-            submit("Bone Blossom", "Seed", 3)
-        elseif get_amount_of_tool("Banana", "Seed") >= 2 then
-            submit("Banana", "Seed", 2)
-        elseif (get_amount_of_tool("Blueberry", "Seed") >= 1 or get_amount_of_tool("Strawberry", "Seed") >= 1)
-               and get_amount_of_tool("Corn", "Seed") >= 1 then
-            submit("Blueberry", "Seed", 1)
-            submit("Corn", "Seed", 1)
-        end
+    -- elseif string.find(craving, "Ice Cream") then
+    --     if get_amount_of_tool("Banana", "Seed") >= 1 and get_amount_of_tool("Sugar Apple", "Seed") >= 1 and get_amount_of_tool("Bone Blossom", "Seed") >= 3 then
+    --         submit("Banana", "Seed", 1)
+    --         submit("Sugar Apple", "Seed", 1)
+    --         submit("Bone Blossom", "Seed", 3)
+    --     elseif get_amount_of_tool("Banana", "Seed") >= 2 then
+    --         submit("Banana", "Seed", 2)
+    --     elseif (get_amount_of_tool("Blueberry", "Seed") >= 1 or get_amount_of_tool("Strawberry", "Seed") >= 1)
+    --            and get_amount_of_tool("Corn", "Seed") >= 1 then
+    --         submit("Blueberry", "Seed", 1)
+    --         submit("Corn", "Seed", 1)
+    --     end
 
-    elseif string.find(craving, "Donut") then
-        if get_amount_of_tool("Corn", "Seed") >= 1 and get_amount_of_tool("Blueberry", "Seed") >= 1 and get_amount_of_tool("Strawberry", "Seed") >= 1 then
-            submit("Corn", "Seed", 1)
-            submit("Blueberry", "Seed", 1)
-            submit("Strawberry", "Seed", 1)
-        elseif get_amount_of_tool("Strawberry", "Seed") >= 1 and get_amount_of_tool("Tomato", "Seed") >= 1 and get_amount_of_tool("Apple", "Seed") >= 1 then
-            submit("Strawberry", "Seed", 1)
-            submit("Tomato", "Seed", 1)
-            submit("Apple", "Seed", 1)
-        elseif get_amount_of_tool("Corn", "Seed") >= 1 and get_amount_of_tool("Watermelon", "Seed") >= 1 then
-            submit("Corn", "Seed", 1)
-            submit("Watermelon", "Seed", 1)
-        end
+    -- elseif string.find(craving, "Donut") then
+    --     if get_amount_of_tool("Corn", "Seed") >= 1 and get_amount_of_tool("Blueberry", "Seed") >= 1 and get_amount_of_tool("Strawberry", "Seed") >= 1 then
+    --         submit("Corn", "Seed", 1)
+    --         submit("Blueberry", "Seed", 1)
+    --         submit("Strawberry", "Seed", 1)
+    --     elseif get_amount_of_tool("Strawberry", "Seed") >= 1 and get_amount_of_tool("Tomato", "Seed") >= 1 and get_amount_of_tool("Apple", "Seed") >= 1 then
+    --         submit("Strawberry", "Seed", 1)
+    --         submit("Tomato", "Seed", 1)
+    --         submit("Apple", "Seed", 1)
+    --     elseif get_amount_of_tool("Corn", "Seed") >= 1 and get_amount_of_tool("Watermelon", "Seed") >= 1 then
+    --         submit("Corn", "Seed", 1)
+    --         submit("Watermelon", "Seed", 1)
+    --     end
 
-    elseif string.find(craving, "Pizza") then
-        if get_amount_of_tool("Sugar Apple", "Seed") >= 1 and get_amount_of_tool("Bone Blossom", "Seed") >= 1 and get_amount_of_tool("Corn", "Seed") >= 1 then
-            submit("Sugar Apple", "Seed", 1)
-            submit("Bone Blossom", "Seed", 1)
-            submit("Corn", "Seed", 1)
-        elseif get_amount_of_tool("Tomato", "Seed") >= 1 and get_amount_of_tool("Corn", "Seed") >= 1 and get_amount_of_tool("Pepper", "Seed") >= 1 and get_amount_of_tool("Sugar Apple", "Seed") >= 2 then
-            submit("Tomato", "Seed", 1)
-            submit("Corn", "Seed", 1)
-            submit("Pepper", "Seed", 1)
-            submit("Sugar Apple", "Seed", 2)
-        elseif get_amount_of_tool("Corn", "Seed") >= 2 and get_amount_of_tool("Apple", "Seed") >= 2 and get_amount_of_tool("Pepper", "Seed") >= 1 then
-            submit("Corn", "Seed", 2)
-            submit("Apple", "Seed", 2)
-            submit("Pepper", "Seed", 1)
-        elseif get_amount_of_tool("Banana", "Seed") >= 1 and get_amount_of_tool("Tomato", "Seed") >= 1 then
-            submit("Banana", "Seed", 1)
-            submit("Tomato", "Seed", 1)
-        end
+    -- elseif string.find(craving, "Pizza") then
+    --     if get_amount_of_tool("Sugar Apple", "Seed") >= 1 and get_amount_of_tool("Bone Blossom", "Seed") >= 1 and get_amount_of_tool("Corn", "Seed") >= 1 then
+    --         submit("Sugar Apple", "Seed", 1)
+    --         submit("Bone Blossom", "Seed", 1)
+    --         submit("Corn", "Seed", 1)
+    --     elseif get_amount_of_tool("Tomato", "Seed") >= 1 and get_amount_of_tool("Corn", "Seed") >= 1 and get_amount_of_tool("Pepper", "Seed") >= 1 and get_amount_of_tool("Sugar Apple", "Seed") >= 2 then
+    --         submit("Tomato", "Seed", 1)
+    --         submit("Corn", "Seed", 1)
+    --         submit("Pepper", "Seed", 1)
+    --         submit("Sugar Apple", "Seed", 2)
+    --     elseif get_amount_of_tool("Corn", "Seed") >= 2 and get_amount_of_tool("Apple", "Seed") >= 2 and get_amount_of_tool("Pepper", "Seed") >= 1 then
+    --         submit("Corn", "Seed", 2)
+    --         submit("Apple", "Seed", 2)
+    --         submit("Pepper", "Seed", 1)
+    --     elseif get_amount_of_tool("Banana", "Seed") >= 1 and get_amount_of_tool("Tomato", "Seed") >= 1 then
+    --         submit("Banana", "Seed", 1)
+    --         submit("Tomato", "Seed", 1)
+    --     end
 
-    elseif string.find(craving, "Sushi") then
-        if get_amount_of_tool("Bone Blossom", "Seed") >= 3 and get_amount_of_tool("Bamboo", "Seed") >= 1 and get_amount_of_tool("Corn", "Seed") >= 1 then
-            submit("Bone Blossom", "Seed", 3)
-            submit("Bamboo", "Seed", 1)
-            submit("Corn", "Seed", 1)
-        elseif get_amount_of_tool("Sugar Apple", "Seed") >= 3 and get_amount_of_tool("Bamboo", "Seed") >= 1 and get_amount_of_tool("Corn", "Seed") >= 1 then
-            submit("Sugar Apple", "Seed", 3)
-            submit("Bamboo", "Seed", 1)
-            submit("Corn", "Seed", 1)
-        elseif get_amount_of_tool("Pepper", "Seed") >= 1 and get_amount_of_tool("Coconut", "Seed") >= 1 and get_amount_of_tool("Bamboo", "Seed") >= 1 and get_amount_of_tool("Corn", "Seed") >= 1 then
-            submit("Pepper", "Seed", 1)
-            submit("Coconut", "Seed", 1)
-            submit("Bamboo", "Seed", 1)
-            submit("Corn", "Seed", 1)
-        elseif get_amount_of_tool("Bamboo", "Seed") >= 4 and get_amount_of_tool("Corn", "Seed") >= 1 then
-            submit("Bamboo", "Seed", 4)
-            submit("Corn", "Seed", 1)
-        end
-    elseif string.find(craving, "Cake") then
-        if get_amount_of_tool("Bone Blossom", "Seed") >= 3 and get_amount_of_tool("Sugar Apple", "Seed") >= 1 and get_amount_of_tool("Banana", "Seed") >= 1 then
-            submit("Bone Blossom", "Seed", 3)
-            submit("Sugar Apple", "Seed", 1)
-            submit("Banana", "Seed", 1)
-        elseif get_amount_of_tool("Banana", "Seed") >= 1 and get_amount_of_tool("Kiwi", "Seed") >= 1 and get_amount_of_tool("Bone Blossom", "Seed") >= 3 then
-            submit("Banana", "Seed", 1)
-            submit("Kiwi", "Seed", 1)
-            submit("Bone Blossom", "Seed", 3)
-        elseif get_amount_of_tool("Sugar Apple", "Seed") >= 4 and get_amount_of_tool("Corn", "Seed") >= 1 then
-            submit("Sugar Apple", "Seed", 4)
-            submit("Corn", "Seed", 1)
-        elseif get_amount_of_tool("Elder Strawberry", "Seed") >= 4 and get_amount_of_tool("Corn", "Seed") >= 1 then
-            submit("Elder Strawberry", "Seed", 4)
-            submit("Corn", "Seed", 1)
-        elseif get_amount_of_tool("Sugar Apple", "Seed") >= 2 and get_amount_of_tool("Corn", "Seed") >= 2 then
-            submit("Sugar Apple", "Seed", 2)
-            submit("Corn", "Seed", 2)
-        elseif (get_amount_of_tool("Kiwi", "Seed") >= 2 and get_amount_of_tool("Banana", "Seed") >= 2)
-           or (get_amount_of_tool("Blueberry", "Seed") >= 1 and get_amount_of_tool("Grape", "Seed") >= 1 and get_amount_of_tool("Apple", "Seed") >= 1 and get_amount_of_tool("Corn", "Seed") >= 1) then
-            if get_amount_of_tool("Kiwi", "Seed")>=2 then
-                submit("Kiwi","Seed",2)
-                submit("Banana","Seed",2)
-            else
-                submit("Blueberry","Seed",1)
-                submit("Grape","Seed",1)
-                submit("Apple","Seed",1)
-                submit("Corn","Seed",1)
-            end
-        end
-    end
+    -- elseif string.find(craving, "Sushi") then
+    --     if get_amount_of_tool("Bone Blossom", "Seed") >= 3 and get_amount_of_tool("Bamboo", "Seed") >= 1 and get_amount_of_tool("Corn", "Seed") >= 1 then
+    --         submit("Bone Blossom", "Seed", 3)
+    --         submit("Bamboo", "Seed", 1)
+    --         submit("Corn", "Seed", 1)
+    --     elseif get_amount_of_tool("Sugar Apple", "Seed") >= 3 and get_amount_of_tool("Bamboo", "Seed") >= 1 and get_amount_of_tool("Corn", "Seed") >= 1 then
+    --         submit("Sugar Apple", "Seed", 3)
+    --         submit("Bamboo", "Seed", 1)
+    --         submit("Corn", "Seed", 1)
+    --     elseif get_amount_of_tool("Pepper", "Seed") >= 1 and get_amount_of_tool("Coconut", "Seed") >= 1 and get_amount_of_tool("Bamboo", "Seed") >= 1 and get_amount_of_tool("Corn", "Seed") >= 1 then
+    --         submit("Pepper", "Seed", 1)
+    --         submit("Coconut", "Seed", 1)
+    --         submit("Bamboo", "Seed", 1)
+    --         submit("Corn", "Seed", 1)
+    --     elseif get_amount_of_tool("Bamboo", "Seed") >= 4 and get_amount_of_tool("Corn", "Seed") >= 1 then
+    --         submit("Bamboo", "Seed", 4)
+    --         submit("Corn", "Seed", 1)
+    --     end
+    -- elseif string.find(craving, "Cake") then
+    --     if get_amount_of_tool("Bone Blossom", "Seed") >= 3 and get_amount_of_tool("Sugar Apple", "Seed") >= 1 and get_amount_of_tool("Banana", "Seed") >= 1 then
+    --         submit("Bone Blossom", "Seed", 3)
+    --         submit("Sugar Apple", "Seed", 1)
+    --         submit("Banana", "Seed", 1)
+    --     elseif get_amount_of_tool("Banana", "Seed") >= 1 and get_amount_of_tool("Kiwi", "Seed") >= 1 and get_amount_of_tool("Bone Blossom", "Seed") >= 3 then
+    --         submit("Banana", "Seed", 1)
+    --         submit("Kiwi", "Seed", 1)
+    --         submit("Bone Blossom", "Seed", 3)
+    --     elseif get_amount_of_tool("Sugar Apple", "Seed") >= 4 and get_amount_of_tool("Corn", "Seed") >= 1 then
+    --         submit("Sugar Apple", "Seed", 4)
+    --         submit("Corn", "Seed", 1)
+    --     elseif get_amount_of_tool("Elder Strawberry", "Seed") >= 4 and get_amount_of_tool("Corn", "Seed") >= 1 then
+    --         submit("Elder Strawberry", "Seed", 4)
+    --         submit("Corn", "Seed", 1)
+    --     elseif get_amount_of_tool("Sugar Apple", "Seed") >= 2 and get_amount_of_tool("Corn", "Seed") >= 2 then
+    --         submit("Sugar Apple", "Seed", 2)
+    --         submit("Corn", "Seed", 2)
+    --     elseif (get_amount_of_tool("Kiwi", "Seed") >= 2 and get_amount_of_tool("Banana", "Seed") >= 2)
+    --        or (get_amount_of_tool("Blueberry", "Seed") >= 1 and get_amount_of_tool("Grape", "Seed") >= 1 and get_amount_of_tool("Apple", "Seed") >= 1 and get_amount_of_tool("Corn", "Seed") >= 1) then
+    --         if get_amount_of_tool("Kiwi", "Seed")>=2 then
+    --             submit("Kiwi","Seed",2)
+    --             submit("Banana","Seed",2)
+    --         else
+    --             submit("Blueberry","Seed",1)
+    --             submit("Grape","Seed",1)
+    --             submit("Apple","Seed",1)
+    --             submit("Corn","Seed",1)
+    --         end
+    --     end
+    -- end
 
-    remote:FireServer("CookBest")
+    -- remote:FireServer("CookBest")
 end
 
 local function sell_inventory()
