@@ -250,7 +250,6 @@ end
 
 local function place_seed(pos, seed_name)
     if not get_tool(seed_name .. " Seed", true) then return end
-    print(seed_name)
     game.ReplicatedStorage.GameEvents.Plant_RE:FireServer(pos, seed_name)
 end
 
@@ -621,6 +620,7 @@ local function submit_food()
 end
 
 local main_loop = function()
+    print((tick() - last_sell_inventory), " ", selling_inventory)
     if (tick() - last_sell_inventory) > 7 then
         last_sell_inventory = tick() 
         return
