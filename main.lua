@@ -50,7 +50,7 @@ local all_traveling_merchant_items = {
 
 local whitelisted_seeds = {
     ["Grape"] = true, ["Loquat"] = true, ["Mushroom"] = true, ["Pepper"] = true,
-    ["Cacao"] = true, ["Feijoa"] = true, ["Tomato"] = true, ["Pitcher Plant"] = true,
+    ["Cacao"] = true, ["Feijoa"] = true, ["Pitcher Plant"] = true,
     ["Grand Volcania"] = true, ["Sunflower"] = true, ["Maple Apple"] = true,
     ["Beanstalk"] = true, ["Ember Lily"] = true, ["Sugar Apple"] = true,
     ["Burning Bud"] = true, ["Giant Pinecone"] = true, ["Elder Strawberry"] = true,
@@ -59,8 +59,6 @@ local whitelisted_seeds = {
     ["Cursed Fruit"] = true, ["Soul Fruit"] = true, ["Dragon Pepper"] = true,
     ["Rosy Delight"] = true, ["Traveler's Fruit"] = true, ["Grand Tomato"] = true,
     ["Fossilight"] = true, ["Taco Fern"] = true, ["Sugarglaze"] = true,
-    ["Strawberry"] = true, ["Coconut"] = true, ["Mango"] = true, ["Banana"] = true,
-    ["Corn"] = true, ["Bamboo"] = true, ["Apple"] = true, ["Blueberry"] = true
 }
 
 local COOKING_EVENT_PIG_CHEF = workspace.Interaction.UpdateItems.CookingEvent.CookingEventModel.PigChefFolder.PigChef
