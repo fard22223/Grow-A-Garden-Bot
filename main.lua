@@ -562,14 +562,13 @@ end
 
 initialize()
 
-coroutine.wrap(function()
-    while State.do_main_loop do
-        pcall(main_loop)
-    end
-end)()
+--coroutine.wrap(function()
+    --while State.do_main_loop do
+        --pcall(main_loop)
+    --end
+--end)()
 
 chat_service:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: stopbotting, startbotting, deleteallbadplants, deleteallplants", Enum.ChatColor.Blue)
-
 text_chat_service.OnIncomingMessage = function(message)
     if State.quit then return end
     if message.TextSource and message.TextSource.UserId == game.Players.LocalPlayer.UserId then
