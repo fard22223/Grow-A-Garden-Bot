@@ -3,162 +3,118 @@ local chat_service = game:GetService("Chat")
 local text_chat_service = game:GetService("TextChatService")
 local teleport_service = game:GetService("TeleportService")
 local gui_service = game:GetService("GuiService")
+local run_service = game:GetService("RunService")
+
+local CONFIG = {
+    WALK_SPEED = 75,
+    SELL_INTERVAL = 7,
+    SHOP_BUY_INTERVAL = 25,
+    GEAR_BUY_INTERVAL = 25,
+    EGG_BUY_INTERVAL = 25,
+    MERCHANT_BUY_INTERVAL = 25,
+    CLEANING_INTERVAL = 45,
+    COOK_INTERVAL = 3,
+    SUBMIT_FOOD_INTERVAL = 6,
+    SPRINKLER_BASIC_INTERVAL = 300,
+    SPRINKLER_ADVANCED_INTERVAL = 300,
+    SPRINKLER_MASTER_INTERVAL = 600,
+    WATER_COOLDOWN = 0.25,
+    PICKUP_CHANCE = 325,
+    PLANT_CHANCE = 100,
+    SPRINKLER_CHANCE = 3
+}
 
 local all_seeds = {
-    "Carrot",
-    "Blueberry",
-    "Strawberry",
-    "Orange Tulip",
-    "Tomato",
-    "Corn",
-    "Daffodil",
-    "Watermelon",
-    "Pumpkin",
-    "Apple",
-    "Bamboo",
-    "Coconut",
-    "Cactus",
-    "Dragon Fruit",
-    "Mango",
-    "Grape",
-    "Pepper",
-    "Mushroom",
-    "Cacao",
-    "Beanstalk",
-    "Ember Lily",
-    "Sugar Apple",
-    "Burning Bud",
-    "Giant Pinecone",
-    "Elder Strawberry",
+    "Carrot", "Blueberry", "Strawberry", "Orange Tulip", "Tomato", "Corn", "Daffodil",
+    "Watermelon", "Pumpkin", "Apple", "Bamboo", "Coconut", "Cactus", "Dragon Fruit",
+    "Mango", "Grape", "Pepper", "Mushroom", "Cacao", "Beanstalk", "Ember Lily",
+    "Sugar Apple", "Burning Bud", "Giant Pinecone", "Elder Strawberry"
 }
 
 local all_gear = {
-    "Watering Can",
-    "Trowel",
-    "Basic Sprinkler",
-    "Advanced Sprinkler",
-    "Master Sprinkler",
-    "Grandmaster Sprinkler"
+    "Watering Can", "Trowel", "Basic Sprinkler", "Advanced Sprinkler",
+    "Master Sprinkler", "Grandmaster Sprinkler"
 }
 
 local all_eggs = {
-    "Common Egg",
-    "Mythical Egg",
-    "Paradise Egg",
-    "Mythical Egg",
-    "Bug Egg",
-    "Rare Summer Egg",
-    "Common Summer Egg"
+    "Common Egg", "Mythical Egg", "Paradise Egg", "Bug Egg",
+    "Rare Summer Egg", "Common Summer Egg"
 }
 
 local all_traveling_merchant_items = {
-    "Cauliflower",
-    "Rafflesia",
-    "Green Apple",
-    "Avocado",
-    "Banana",
-    "Pineapple",
-    "Kiwi",
-    "Bell Pepper",
-    "Prickly Pear",
-    "Loquat",
-    "Feijoa",
-    "Pitcher Plant",
-    "Mutation Spray Wet",
-    "Mutation Spray Windstruck",
-    "Mutation Spray Verdant",
-    "Night Staff",
-    "Star Caller",
-    "Mutation Spray Cloudtouched",
+    "Cauliflower", "Rafflesia", "Green Apple", "Avocado", "Banana", "Pineapple",
+    "Kiwi", "Bell Pepper", "Prickly Pear", "Loquat", "Feijoa", "Pitcher Plant",
+    "Mutation Spray Wet", "Mutation Spray Windstruck", "Mutation Spray Verdant",
+    "Night Staff", "Star Caller", "Mutation Spray Cloudtouched"
 }
 
 local whitelisted_seeds = {
-    "Grape", 
-    "Loquat",
-    "Mushroom",
-    "Pepper",
-    "Cacao",
-    "Feijoa",
-    "Tomato",
-    "Pitcher Plant",
-    "Grand Volcania",
-    "Sunflower",
-    "Maple Apple",
-    "Beanstalk",
-    "Ember Lily",
-    "Sugar Apple",
-    "Burning Bud",
-    "Giant Pinecone",
-    "Elder Strawberry",  
-    "Tranquil Bloom",
-    "Bone Blossom", 
-    "Elephant Ears",
-    "Candy Blossom",
-    "Lotus",
-    "Venus Fly Trap",
-    "Cursed Fruit",
-    "Soul Fruit",
-    "Dragon Pepper",
-    "Rosy Delight",
-    "Traveler's Fruit",
-    "Grand Tomato",
-    "Fossilight",
-    "Taco Fern",
-    "Sugarglaze",
-    "Strawberry",
-    "Coconut",
-    "Mango",
-    "Tomato",
-    "Banana",
-    "Corn",
-    "Bamboo",
-    "Apple",
-    "Blueberry"
+    ["Grape"] = true, ["Loquat"] = true, ["Mushroom"] = true, ["Pepper"] = true,
+    ["Cacao"] = true, ["Feijoa"] = true, ["Tomato"] = true, ["Pitcher Plant"] = true,
+    ["Grand Volcania"] = true, ["Sunflower"] = true, ["Maple Apple"] = true,
+    ["Beanstalk"] = true, ["Ember Lily"] = true, ["Sugar Apple"] = true,
+    ["Burning Bud"] = true, ["Giant Pinecone"] = true, ["Elder Strawberry"] = true,
+    ["Tranquil Bloom"] = true, ["Bone Blossom"] = true, ["Elephant Ears"] = true,
+    ["Candy Blossom"] = true, ["Lotus"] = true, ["Venus Fly Trap"] = true,
+    ["Cursed Fruit"] = true, ["Soul Fruit"] = true, ["Dragon Pepper"] = true,
+    ["Rosy Delight"] = true, ["Traveler's Fruit"] = true, ["Grand Tomato"] = true,
+    ["Fossilight"] = true, ["Taco Fern"] = true, ["Sugarglaze"] = true,
+    ["Strawberry"] = true, ["Coconut"] = true, ["Mango"] = true, ["Banana"] = true,
+    ["Corn"] = true, ["Bamboo"] = true, ["Apple"] = true, ["Blueberry"] = true
 }
 
 local COOKING_EVENT_PIG_CHEF = workspace.Interaction.UpdateItems.CookingEvent.CookingEventModel.PigChefFolder.PigChef
 local CURRENT_CRAVING = COOKING_EVENT_PIG_CHEF.Cravings.CravingThoughtBubblePart.CravingBillboard.BG.CravingTextLabel
 
--- Sell_Inventory = sells entire inventory
--- Water_RE = watering can, first param is position
--- Plant_RE = plants a seed, first parameter is the position, second is the seed
--- BuySeedStock = buys a seed of your choice
--- BuyPetEgg = buys an egg of your choice
--- BuyTravelingMerchantShopStock = buys a fucking thing of your choice
--- BuyGearStock = buys a gear of your choice
--- SprinklerService has ocmmand like Create (requires sprinkler to be held) (2nd argument is cframe)
--- CookingPotService_RE has commands like: SubmitHeldPlant (requires player to be holding a selected fruit), CookBest (cooks all the shit)
--- SubmitFoodService_RE has commands like: SubmitHeldFood (gives the fatass pig the soup you cooked)
--- loadstring(game:HttpGet("https://raw.githubusercontent.com/fard22223/Grow-A-Garden-Bot/refs/heads/main/main.lua"))()
+local State = {
+    found_farm = nil,
+    do_main_loop = true,
+    quit = false,
+    selling_inventory = false,
+    cleaning_plants = false,
+    picking_up = false,
+    all_connections = {},
+    
+    timers = {
+        last_water = 0,
+        last_sell_inventory = 0,
+        last_traveling_merchant_buy = 0,
+        last_gear_buy = 0,
+        last_shop_buy = 0,
+        last_egg_buy = 0,
+        last_submit_food = 0,
+        last_cook_food = 0,
+        last_cleaning_plants = 0,
+        sprinkler_timers = {
+            basic = 0,
+            advanced = 0,
+            master = 0,
+            grandmaster = 0
+        }
+    }
+}
 
-local shovel_prompt = game.Players.LocalPlayer.PlayerGui.ShovelPrompt
-local current_placeid = game.PlaceId
-local found_farm = nil
-local do_main_loop = true
-local quit = false 
-local selling_inventory = false
-local cleaning_plants = false
-local last_cleaning_plants = tick()
-local all_connections = {}
-local last_water = tick()
-local last_sell_inventory = tick()
-local last_traveling_merchant_buy = tick()
-local last_gear_buy = tick()
-local last_shop_buy = tick()
-local last_egg_buy = tick()
-local last_submit_food = tick()
-local last_cook_food = tick()
-local last_basic_sprinkler = tick()
-local last_advanced_sprinkler = tick()
-local last_godly_sprinkler = tick()
-local last_master_sprinkler = tick()
-local last_grandmaster_sprinkler = tick()
-
-local insert = function(connection)
-    all_connections[#all_connections + 1] = connection
+local function get_current_time()
+    return tick()
 end
 
--- incase i update the script while ingame. shuts this shit down
+local function time_since(last_time)
+    return get_current_time() - last_time
+end
+
+local function add_connection(connection)
+    State.all_connections[#State.all_connections + 1] = connection
+end
+
+local function cleanup_connections()
+    for i, connection in ipairs(State.all_connections) do
+        if connection then
+            connection:Disconnect()
+        end
+    end
+    State.all_connections = {}
+end
+
 local current_version = 1
 if workspace:GetAttribute("SCRIPT_COUNT") then
     workspace:SetAttribute("SCRIPT_COUNT", workspace:GetAttribute("SCRIPT_COUNT") + 1)
@@ -167,36 +123,91 @@ else
     workspace:SetAttribute("SCRIPT_COUNT", current_version)
 end
 
-insert(workspace:GetAttributeChangedSignal("SCRIPT_COUNT"):Connect(function()
+add_connection(workspace:GetAttributeChangedSignal("SCRIPT_COUNT"):Connect(function()
     if workspace:GetAttribute("SCRIPT_COUNT") ~= current_version then
-        do_main_loop = false
-        quit = true
-        for i, v in all_connections do
-            v:Disconnect()
-            v = nil
+        State.do_main_loop = false
+        State.quit = true
+        cleanup_connections()
+    end
+end))
+
+local function initialize()
+    local player = game.Players.LocalPlayer
+    if player.Character and player.Character.Humanoid then
+        player.Character.Humanoid.WalkSpeed = CONFIG.WALK_SPEED
+    end
+    
+    for _, farm in pairs(game.Workspace.Farm:GetChildren()) do
+        if farm:FindFirstChild("Important") and 
+           farm.Important:FindFirstChild("Data") and
+           farm.Important.Data:FindFirstChild("Owner") and
+           farm.Important.Data.Owner.Value == player.Name then
+            State.found_farm = farm
+            break
         end
     end
-end))
-
-game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 75
-for i, v in pairs(game.Workspace.Farm:GetChildren()) do
-    if v.Important.Data.Owner.Value == game.Players.LocalPlayer.Name then
-        found_farm = v
+    
+    for _, part in pairs(game.Workspace.Farm:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+        end
     end
+    
+    add_connection(game.Workspace.Farm.DescendantAdded:Connect(function(descendant)
+        if descendant:IsA("BasePart") then
+            descendant.CanCollide = false
+        end
+    end))
 end
 
--- to make it easier on the bot 
-for i, v in pairs(game.Workspace.Farm:GetDescendants()) do
-    if v:IsA("BasePart") then
-        v.CanCollide = false
+local function get_tool(tool_name, is_seed)
+    local player = game.Players.LocalPlayer
+    
+    for _, tool in pairs(player.Character:GetChildren()) do
+        if tool:IsA("Tool") then
+            local name_match = string.find(tool.Name, tool_name)
+            if is_seed and name_match then
+                return tool
+            elseif not is_seed and name_match and tool:GetAttribute("MaxAge") then
+                return tool
+            end
+        end
     end
+    
+    for _, tool in pairs(player.Backpack:GetChildren()) do
+        if tool:IsA("Tool") then
+            local name_match = string.find(tool.Name, tool_name)
+            if is_seed and name_match then
+                player.Character.Humanoid:EquipTool(tool)
+                return tool
+            elseif not is_seed and name_match and tool:GetAttribute("MaxAge") then
+                player.Character.Humanoid:EquipTool(tool)
+                return tool
+            end
+        end
+    end
+    
+    return nil
 end
 
-insert(game.Workspace.Farm.DescendantAdded:Connect(function(dick)
-    if dick:IsA("BasePart") then
-        dick.CanCollide = false
+local function get_amount_of_tool(tool_name, is_seed)
+    local count = 0
+    local player = game.Players.LocalPlayer
+    
+    player.Character.Humanoid:UnequipTools()
+    for _, tool in pairs(player.Backpack:GetChildren()) do
+        if tool:IsA("Tool") then
+            local name_match = string.find(tool.Name, tool_name)
+            if is_seed and name_match then
+                count = count + 1
+            elseif not is_seed and name_match and tool:GetAttribute("MaxAge") then
+                count = count + 1
+            end
+        end
     end
-end))
+    
+    return count
+end
 
 local function mouse_click()
     local tool = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
@@ -205,347 +216,380 @@ local function mouse_click()
     end
 end
 
-local function get_tool(tool_name, is_seed)
-    -- Check if already equipped
-    for i, v in pairs(game.Players.LocalPlayer.Character:GetChildren()) do
-        if v:IsA("Tool") then
-            if is_seed and string.find(v.Name, tool_name) or not is_seed and string.find(v.Name, tool_name) and v:GetAttribute("MaxAge") then
-                return v  -- Return immediately!
-            end
-        end
-    end
-
-    -- Check backpack and equip
-    for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-        if v:IsA("Tool") and string.find(v.Name, tool_name) then
-            if is_seed and string.find(v.Name, tool_name) or not is_seed and string.find(v.Name, tool_name) and v:GetAttribute("MaxAge") then
-                game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
-                return v  -- Return immediately!
-            end
-        end
-    end
-
-    return nil  -- No tool found
-end
-
-local function get_amount_of_tool(tool_name, is_seed)
-    local count = 0
-
-    game.Players.LocalPlayer.Character.Humanoid:UnequipTools()
-    for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
-            if v:IsA("Tool") and is_seed and string.find(v.Name, tool_name) or v:IsA("Tool") and not is_seed and string.find(v.Name, tool_name) and v:GetAttribute("MaxAge") then
-                count += 1
-            end
-    end
-
-    return count
-end
-
-local function open_seed_pack(name)
-    local tool = get_tool(name)
-    if not tool then return end
-
-    mouse_click()
-end
-
 local function place_seed(pos, seed_name)
-    if not get_tool(seed_name .. " Seed", true) then return end
-    game.ReplicatedStorage.GameEvents.Plant_RE:FireServer(pos, seed_name)
+    if not get_tool(seed_name .. " Seed", true) then return false end
+    pcall(function()
+        game.ReplicatedStorage.GameEvents.Plant_RE:FireServer(pos, seed_name)
+    end)
+    return true
 end
 
 local function buy_seed(seed)
-    game.ReplicatedStorage.GameEvents.BuySeedStock:FireServer(seed)
+    pcall(function()
+        game.ReplicatedStorage.GameEvents.BuySeedStock:FireServer(seed)
+    end)
 end
 
 local function buy_traveling_merchant_item(item)
-    game.ReplicatedStorage.GameEvents.BuyTravelingMerchantShopStock:FireServer(item)
+    pcall(function()
+        game.ReplicatedStorage.GameEvents.BuyTravelingMerchantShopStock:FireServer(item)
+    end)
 end
 
 local function buy_gear(gear)
-    game.ReplicatedStorage.GameEvents.BuyGearStock:FireServer(gear)
+    pcall(function()
+        game.ReplicatedStorage.GameEvents.BuyGearStock:FireServer(gear)
+    end)
 end
 
 local function buy_egg(egg)
-    game.ReplicatedStorage.GameEvents.BuyPetEgg:FireServer(egg)
+    pcall(function()
+        game.ReplicatedStorage.GameEvents.BuyPetEgg:FireServer(egg)
+    end)
 end
 
 local function click_on_part(part)
+    if not part or not part.Position then return end
     local screen_pos, on_screen = workspace.CurrentCamera:WorldToScreenPoint(part.Position)
-    vim:SendMouseButtonEvent(screen_pos.X, screen_pos.Y, 0, true, game, 1)  
-    wait(0.01)
-    vim:SendMouseButtonEvent(screen_pos.X, screen_pos.Y, 0, false, game, 1)  
+    if on_screen then
+        vim:SendMouseButtonEvent(screen_pos.X, screen_pos.Y, 0, true, game, 1)
+        wait(0.01)
+        vim:SendMouseButtonEvent(screen_pos.X, screen_pos.Y, 0, false, game, 1)
+    end
 end
 
 local function click_on_ui(ui)
+    if not ui then return end
     for _, conn in pairs(getconnections(ui.MouseButton1Click)) do
-        conn:Fire()
-    end  
-end
-
-local remote = game.ReplicatedStorage.GameEvents.CookingPotService_RE
-
-local function submit(tool, type_, count)
-    local shit = get_tool(tool, false)
-    if not shit then return end
-    
-    for i = 1, count do
-        shit = get_tool(tool, false)
-        if not shit then break end
-        wait(0.1)
-        remote:FireServer("SubmitHeldPlant")
-        wait(0.1)
+        pcall(function()
+            conn:Fire()
+        end)
     end
-end
-
-local function cooked_event()
-    local craving = CURRENT_CRAVING.Text
-    if selling_inventory then return end
-    selling_inventory = true
-
-    local num = math.random(1, 4)
-    for i, v in whitelisted_seeds do
-        submit(v, "Seed", 10)
-    end
-
-    selling_inventory = false
-    remote:FireServer("CookBest")
-end
-
-local function submit_food()
-    if selling_inventory then return end
-    selling_inventory = true
-    game.ReplicatedStorage.GameEvents.CookingPotService_RE:FireServer("GetFoodFromPot")
-    wait(2)
-    local food = get_tool("Soup") or get_tool("Cake") or get_tool("Burger") or get_tool("Sushi") or get_tool("Pizza") or get_tool("Donut") or get_tool("Ice Cream") or get_tool("Hot Dog") or get_tool("Waffle") or get_tool("Pie") or get_tool("Sandwich") or get_tool("Salad")
-    wait(1)
-    game.ReplicatedStorage.GameEvents.SubmitFoodService_RE:FireServer("SubmitHeldFood")
-    wait(0.25)
-
-    selling_inventory = false
-end
-
-local function sell_inventory()
-    if selling_inventory then return end
-    selling_inventory = true
-
-    cooked_event()
-    submit_food()
-
-    game.Players.LocalPlayer.Character.Humanoid:MoveTo(workspace.NPCS.Steven.HumanoidRootPart.Position)
-    game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
-    wait(0.1)
-    game.ReplicatedStorage.GameEvents.Sell_Inventory:FireServer()
-    wait(0.2)
-    selling_inventory = false
 end
 
 local function watering_can(pos)
-    if (tick() - last_water) < 0.25 then
-        return
+    if time_since(State.timers.last_water) < CONFIG.WATER_COOLDOWN then
+        return false
     end
-
-    last_water = tick()
+    
+    State.timers.last_water = get_current_time()
     local tool = get_tool("Watering Can")
-    if not tool then return end
-    game.ReplicatedStorage.GameEvents.Water_RE:FireServer(pos + Vector3.new(0, -0.15, 0))
+    if not tool then return false end
+    
+    pcall(function()
+        game.ReplicatedStorage.GameEvents.Water_RE:FireServer(pos + Vector3.new(0, -0.15, 0))
+    end)
+    return true
 end
 
 local function sprinkler(type, cframe)
     local sprinkler_item = get_tool(type)
-    if not sprinkler_item then return end
-
-    game.ReplicatedStorage.GameEvents.SprinklerService:FireServer("Create", cframe)
+    if not sprinkler_item then return false end
+    
+    pcall(function()
+        game.ReplicatedStorage.GameEvents.SprinklerService:FireServer("Create", cframe)
+    end)
+    return true
 end
 
-local picking_up = false
-local function pickup_all_fruits()
-    if picking_up or selling_inventory then return end
-    picking_up = true
+local function submit_plants_to_cooking()
+    local remote = game.ReplicatedStorage.GameEvents.CookingPotService_RE
+    local submitted = 0
+    
+    for seed_name in pairs(whitelisted_seeds) do
+        local tool = get_tool(seed_name, false)
+        if tool then
+            for i = 1, 10 do
+                tool = get_tool(seed_name, false)
+                if not tool then break end
+                
+                wait(0.1)
+                pcall(function()
+                    remote:FireServer("SubmitHeldPlant")
+                end)
+                wait(0.1)
+                submitted = submitted + 1
+            end
+        end
+    end
+    
+    return submitted > 0
+end
 
-    for _, prompt in ipairs(found_farm.Important:GetDescendants()) do
+local function cook_and_submit_food()
+    if State.selling_inventory then return false end
+    State.selling_inventory = true
+    
+    submit_plants_to_cooking()
+    
+    pcall(function()
+        game.ReplicatedStorage.GameEvents.CookingPotService_RE:FireServer("CookBest")
+    end)
+    
+    wait(2)
+    
+    pcall(function()
+        game.ReplicatedStorage.GameEvents.CookingPotService_RE:FireServer("GetFoodFromPot")
+    end)
+    
+    wait(2)
+    
+    local food_types = {"Soup", "Cake", "Burger", "Sushi", "Pizza", "Donut", "Ice Cream", "Hot Dog", "Waffle", "Pie", "Sandwich", "Salad"}
+    for _, food_type in ipairs(food_types) do
+        if get_tool(food_type) then
+            wait(1)
+            pcall(function()
+                game.ReplicatedStorage.GameEvents.SubmitFoodService_RE:FireServer("SubmitHeldFood")
+            end)
+            break
+        end
+    end
+    
+    State.selling_inventory = false
+    return true
+end
+
+local function sell_inventory()
+    if State.selling_inventory then return false end
+    State.selling_inventory = true
+    
+    cook_and_submit_food()
+    
+    local player = game.Players.LocalPlayer
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid:MoveTo(workspace.NPCS.Steven.HumanoidRootPart.Position)
+        player.Character.Humanoid.MoveToFinished:Wait()
+        wait(0.1)
+        
+        pcall(function()
+            game.ReplicatedStorage.GameEvents.Sell_Inventory:FireServer()
+        end)
+        wait(0.2)
+    end
+    
+    State.selling_inventory = false
+    return true
+end
+
+local function pickup_all_fruits()
+    if State.picking_up or State.selling_inventory or not State.found_farm then 
+        return false 
+    end
+    State.picking_up = true
+    
+    local prompts = State.found_farm.Important:GetDescendants()
+    for _, prompt in ipairs(prompts) do
+        if State.quit or State.selling_inventory then break end
+        
         if prompt:IsA("ProximityPrompt") and prompt.Parent and prompt.Parent:IsA("BasePart") then
-            if quit then break end
-            if math.random(1, 325) ~= 325 then continue end
+            if math.random(1, CONFIG.PICKUP_CHANCE) ~= CONFIG.PICKUP_CHANCE then 
+                continue 
+            end
+            
             prompt.Enabled = true
             prompt.RequiresLineOfSight = false
             prompt.MaxActivationDistance = 100000000000
-
-            if prompt.Parent then
-                if selling_inventory or quit then break end
-
-                local pos = prompt.Parent.Position
-                pcall(function()
-                    watering_can(pos)
-                end)
-
+            
+            local pos = prompt.Parent.Position
+            local player = game.Players.LocalPlayer
+            
+            watering_can(pos)
+            
+            if player.Character and player.Character:FindFirstChild("Humanoid") then
                 workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, pos)
-                game.Players.LocalPlayer.Character.Humanoid:MoveTo((prompt.Parent.CFrame * CFrame.new(0, 1, 0)).Position)
+                player.Character.Humanoid:MoveTo((prompt.Parent.CFrame * CFrame.new(0, 1, 0)).Position)
                 vim:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-                game.Players.LocalPlayer.Character.Humanoid.MoveToFinished:Wait()
+                player.Character.Humanoid.MoveToFinished:Wait()
                 vim:SendKeyEvent(false, Enum.KeyCode.E, false, game)
-
-                if math.random(1, 25) == 25 then
-                    for i, v in whitelisted_seeds do
-                        if selling_inventory or quit then break end
-                        if math.random(1, 10) == 10 then
-                            local seed = get_tool(v .. " Seed", true)
-                            if seed then 
-                                for j = 0, 2 do 
-                                    if selling_inventory or quit then break end
-
-                                    place_seed(game.Players.LocalPlayer.Character.Torso.Position, v)
-                                    wait(0.1)
-                                end
-                            end
+                
+                if math.random(1, CONFIG.PLANT_CHANCE) == CONFIG.PLANT_CHANCE then
+                    for seed_name in pairs(whitelisted_seeds) do
+                        if State.selling_inventory or State.quit then break end
+                        
+                        if get_tool(seed_name .. " Seed", true) then
+                            place_seed(player.Character.Torso.Position, seed_name)
+                            wait(0.1)
+                            break
                         end
                     end
                 end
-        
-                if (tick() - last_basic_sprinkler) > (5 * 60) and math.random(1, 3) == 3 then
-                    last_basic_sprinkler = tick()
+                
+                local current_time = get_current_time()
+                if time_since(State.timers.sprinkler_timers.basic) > CONFIG.SPRINKLER_BASIC_INTERVAL and 
+                   math.random(1, CONFIG.SPRINKLER_CHANCE) == CONFIG.SPRINKLER_CHANCE then
+                    State.timers.sprinkler_timers.basic = current_time
                     sprinkler("Basic Sprinkler", CFrame.new(pos))
                 end
-
-                if (tick() - last_advanced_sprinkler) > (5 * 60) and math.random(1, 3) == 3 then
-                    last_advanced_sprinkler = tick()
+                
+                if time_since(State.timers.sprinkler_timers.advanced) > CONFIG.SPRINKLER_ADVANCED_INTERVAL and 
+                   math.random(1, CONFIG.SPRINKLER_CHANCE) == CONFIG.SPRINKLER_CHANCE then
+                    State.timers.sprinkler_timers.advanced = current_time
                     sprinkler("Advanced Sprinkler", CFrame.new(pos))
                 end
-
-                if (tick() - last_godly_sprinkler) > (5 * 60) and math.random(1, 3) == 3 then
-                    last_godly_sprinkler = tick()
-                    sprinkler("Godly Sprinkler", CFrame.new(pos))
-                end
-
-                if (tick() - last_master_sprinkler) > (10 * 60) and math.random(1, 3) == 3 then
-                    last_master_sprinkler = tick()
+                
+                if time_since(State.timers.sprinkler_timers.master) > CONFIG.SPRINKLER_MASTER_INTERVAL and 
+                   math.random(1, CONFIG.SPRINKLER_CHANCE) == CONFIG.SPRINKLER_CHANCE then
+                    State.timers.sprinkler_timers.master = current_time
                     sprinkler("Master Sprinkler", CFrame.new(pos))
                 end
-
-                if (tick() - last_grandmaster_sprinkler) > (10 * 60) and math.random(1, 3) == 3 then
-                    last_grandmaster_sprinkler = tick()
+                
+                if time_since(State.timers.sprinkler_timers.grandmaster) > CONFIG.SPRINKLER_MASTER_INTERVAL and 
+                   math.random(1, CONFIG.SPRINKLER_CHANCE) == CONFIG.SPRINKLER_CHANCE then
+                    State.timers.sprinkler_timers.grandmaster = current_time
                     sprinkler("Grandmaster Sprinkler", CFrame.new(pos))
                 end
             end
-        end       
+        end
     end
-
-    picking_up = false
+    
+    State.picking_up = false
+    return true
 end
 
-local delete_non_whitlisted_plants = function()
-    if cleaning_plants then return end
-    cleaning_plants = true
-
-    for i, v in pairs(found_farm.Important.Plants_Physical:GetChildren()) do
-        if quit or math.random(1, 7) == 7 then break end
-
-        if not whitelisted_seeds[v.Name] then
+local function delete_non_whitelisted_plants()
+    if State.cleaning_plants or not State.found_farm then return false end
+    State.cleaning_plants = true
+    
+    local shovel_prompt = game.Players.LocalPlayer.PlayerGui.ShovelPrompt
+    
+    for _, plant in pairs(State.found_farm.Important.Plants_Physical:GetChildren()) do
+        if State.quit or math.random(1, 7) == 7 then break end
+        
+        if not whitelisted_seeds[plant.Name] then
             get_tool("Shovel")
             pcall(function()
-                workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, v.PrimaryPart.Position)
-                click_on_part(v.PrimaryPart)
+                workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, plant.PrimaryPart.Position)
+                click_on_part(plant.PrimaryPart)
             end)
-          
+            
             wait(0.01)
-            if quit then break end
-
+            if State.quit then break end
+            
             if whitelisted_seeds[shovel_prompt.ConfirmFrame.FruitName.Text] then
                 click_on_ui(shovel_prompt.ConfirmFrame.Cancel)
                 continue
-            end 
+            end
             click_on_ui(shovel_prompt.ConfirmFrame.Confirm)
         end
     end
-
-    cleaning_plants = false
+    
+    State.cleaning_plants = false
+    return true
 end
 
-local main_loop = function()
-    print((tick() - last_sell_inventory), " ", selling_inventory)
-    if (tick() - last_sell_inventory) > 7 then
-        last_sell_inventory = tick() 
+local function delete_all_plants()
+    if State.cleaning_plants or not State.found_farm then return false end
+    State.cleaning_plants = true
+    
+    local shovel_prompt = game.Players.LocalPlayer.PlayerGui.ShovelPrompt
+    
+    for _, plant in pairs(State.found_farm.Important.Plants_Physical:GetChildren()) do
+        if State.quit then break end
+        
+        get_tool("Shovel")
+        pcall(function()
+            workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, plant.PrimaryPart.Position)
+            click_on_part(plant.PrimaryPart)
+        end)
+        
+        wait(0.01)
+        if State.quit then break end
+        
+        click_on_ui(shovel_prompt.ConfirmFrame.Confirm)
+    end
+    
+    State.cleaning_plants = false
+    return true
+end
+
+local function main_loop()
+    local current_time = get_current_time()
+    
+    if time_since(State.timers.last_sell_inventory) > CONFIG.SELL_INTERVAL then
+        State.timers.last_sell_inventory = current_time
+        sell_inventory()
         return
     end
-
-    if (tick() - last_shop_buy) > 25 then
-        last_shop_buy = tick() 
-        for i, v in all_seeds do
-            buy_seed(v)
+    
+    if time_since(State.timers.last_shop_buy) > CONFIG.SHOP_BUY_INTERVAL then
+        State.timers.last_shop_buy = current_time
+        for _, seed in ipairs(all_seeds) do
+            buy_seed(seed)
         end
     end
-                    
-    if (tick() - last_gear_buy) > 25 then
-        last_gear_buy = tick() 
-        for i, v in all_gear do
-            buy_gear(v)
+    
+    if time_since(State.timers.last_gear_buy) > CONFIG.GEAR_BUY_INTERVAL then
+        State.timers.last_gear_buy = current_time
+        for _, gear in ipairs(all_gear) do
+            buy_gear(gear)
         end
     end
-
-    if (tick() - last_egg_buy) > 25 then
-        last_shop_buy = tick() 
-        for i, v in all_eggs do
-            buy_egg(v)
+    
+    if time_since(State.timers.last_egg_buy) > CONFIG.EGG_BUY_INTERVAL then
+        State.timers.last_egg_buy = current_time
+        for _, egg in ipairs(all_eggs) do
+            buy_egg(egg)
         end
     end
-
-    if (tick() - last_traveling_merchant_buy) > 25 then
-        last_traveling_merchant_buy = tick()
-        for i, v in all_traveling_merchant_items do
-            buy_traveling_merchant_item(v)
+    
+    if time_since(State.timers.last_traveling_merchant_buy) > CONFIG.MERCHANT_BUY_INTERVAL then
+        State.timers.last_traveling_merchant_buy = current_time
+        for _, item in ipairs(all_traveling_merchant_items) do
+            buy_traveling_merchant_item(item)
         end
     end
-
-    if (tick() - last_cleaning_plants) > 45 then
-        last_cleaning_plants = tick()
-        delete_non_whitlisted_plants()
+    
+    if time_since(State.timers.last_cleaning_plants) > CONFIG.CLEANING_INTERVAL then
+        State.timers.last_cleaning_plants = current_time
+        delete_non_whitelisted_plants()
         return
     end
-
-    if (tick() - last_cook_food) > 3 then
-        last_cook_food = tick()
+    
+    if time_since(State.timers.last_cook_food) > CONFIG.COOK_INTERVAL then
+        State.timers.last_cook_food = current_time
+        cook_and_submit_food()
         return
     end
-
-    cooked_event()
-    submit_food()
-    sell_inventory()
-
-    if (tick() - last_submit_food) > 6 then
-        last_submit_food = tick()
-        return
+    
+    local gourmet_pack = get_tool("Gourmet Seed Pack")
+    if gourmet_pack then
+        mouse_click()
     end
-
-    open_seed_pack("Gourmet Seed Pack")
-
-    if not selling_inventory then
+    
+    if not State.selling_inventory then
         pickup_all_fruits()
-        return
     end
-
-    wait()
+    
+    wait(0.1)
 end
 
-coroutine.wrap(function() 
-    while do_main_loop do
-        main_loop()
+initialize()
+
+coroutine.wrap(function()
+    while State.do_main_loop do
+        pcall(main_loop)
     end
 end)()
 
-chat_service:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: stopbotting, startbotting, deleteallbadplants", Enum.ChatColor.Blue)
+chat_service:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: stopbotting, startbotting, deleteallbadplants, deleteallplants", Enum.ChatColor.Blue)
+
 text_chat_service.OnIncomingMessage = function(message)
-    if quit then return end
+    if State.quit then return end
     if message.TextSource and message.TextSource.UserId == game.Players.LocalPlayer.UserId then
-        if message.Text:lower() == "startbotting" then
-            do_main_loop = true
-            coroutine.wrap(function() 
-                while do_main_loop do
-                    main_loop()
+        local command = message.Text:lower()
+        if command == "startbotting" then
+            State.do_main_loop = true
+            coroutine.wrap(function()
+                while State.do_main_loop do
+                    pcall(main_loop)
                 end
             end)()
-        elseif message.Text:lower() == "stopbotting" then
-            do_main_loop = false
-        elseif message.Text:lower() == "deleteallbadplants" then
-            delete_non_whitlisted_plants()
+        elseif command == "stopbotting" then
+            State.do_main_loop = false
+        elseif command == "deleteallbadplants" then
+            delete_non_whitelisted_plants()
+        elseif command == "deleteallplants" then
+            delete_all_plants()
         end
     end
 end
