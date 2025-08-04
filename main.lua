@@ -253,7 +253,7 @@ local function click_on_part(part)
     vim:SendMouseButtonEvent(screen_pos.X, screen_pos.Y, 0, true, game, 1)
     wait(0.01)
     vim:SendMouseButtonEvent(screen_pos.X, screen_pos.Y, 0, false, game, 1)
-    return = true
+    return true
 end
 
 local function click_on_ui(ui)
