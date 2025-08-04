@@ -482,7 +482,7 @@ local function delete_all_plants()
         if State.quit then break end
         
         get_tool("Shovel", true)
-        if not click_on_part(plant.PrimaryPart) then continue end
+        if not click_on_part(plant:FindFirstChildOfClass("BasePart")) then continue end
         
         wait(0.01)
         if State.quit then break end
