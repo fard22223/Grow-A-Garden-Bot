@@ -249,11 +249,9 @@ end
 local function click_on_part(part)
     if not part or not part.Position then return end
     local screen_pos, on_screen = workspace.CurrentCamera:WorldToScreenPoint(part.Position)
-    if on_screen then
-        vim:SendMouseButtonEvent(screen_pos.X, screen_pos.Y, 0, true, game, 1)
-        wait(0.01)
-        vim:SendMouseButtonEvent(screen_pos.X, screen_pos.Y, 0, false, game, 1)
-    end
+    vim:SendMouseButtonEvent(screen_pos.X, screen_pos.Y, 0, true, game, 1)
+    wait(0.01)
+    vim:SendMouseButtonEvent(screen_pos.X, screen_pos.Y, 0, false, game, 1)
 end
 
 local function click_on_ui(ui)
@@ -456,7 +454,6 @@ local function delete_non_whitelisted_plants()
         if not whitelisted_seeds[plant.Name] then
             get_tool("Shovel", true)
             pcall(function()
-                workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, plant.PrimaryPart.Position)
                 click_on_part(plant.PrimaryPart)
             end)
             
@@ -486,7 +483,6 @@ local function delete_all_plants()
         
         get_tool("Shovel", true)
         pcall(function()
-            workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, plant.PrimaryPart.Position)
             click_on_part(plant.PrimaryPart)
         end)
         
