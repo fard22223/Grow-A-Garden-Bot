@@ -247,11 +247,13 @@ local function buy_egg(egg)
 end
 
 local function click_on_part(part)
-    if not part or not part.Position then return end
+    if not part or not part.Position then return false end
     local screen_pos, on_screen = workspace.CurrentCamera:WorldToScreenPoint(part.Position)
+    if not on_screen then return false end
     vim:SendMouseButtonEvent(screen_pos.X, screen_pos.Y, 0, true, game, 1)
     wait(0.01)
     vim:SendMouseButtonEvent(screen_pos.X, screen_pos.Y, 0, false, game, 1)
+    return = true
 end
 
 local function click_on_ui(ui)
@@ -453,9 +455,7 @@ local function delete_non_whitelisted_plants()
         
         if not whitelisted_seeds[plant.Name] then
             get_tool("Shovel", true)
-            pcall(function()
-                click_on_part(plant.PrimaryPart)
-            end)
+            if not click_on_part(plant.PrimaryPart) then continue end
             
             wait(0.01)
             if State.quit then break end
@@ -482,9 +482,7 @@ local function delete_all_plants()
         if State.quit then break end
         
         get_tool("Shovel", true)
-        pcall(function()
-            click_on_part(plant.PrimaryPart)
-        end)
+        if not click_on_part(plant.PrimaryPart) then continue end
         
         wait(0.01)
         if State.quit then break end
