@@ -19,8 +19,8 @@ local CONFIG = {
     SPRINKLER_ADVANCED_INTERVAL = 300,
     SPRINKLER_MASTER_INTERVAL = 600,
     WATER_COOLDOWN = 0.25,
-    PICKUP_CHANCE = 325,
-    PLANT_CHANCE = 100,
+    PICKUP_CHANCE = 25,
+    PLANT_CHANCE = 50,
     SPRINKLER_CHANCE = 3
 }
 
@@ -505,12 +505,6 @@ end
 local function main_loop()
     local current_time = get_current_time()
     
-    if time_since(State.timers.last_sell_inventory) > CONFIG.SELL_INTERVAL then
-        State.timers.last_sell_inventory = current_time
-        sell_inventory()
-        return
-    end
-    
     if time_since(State.timers.last_shop_buy) > CONFIG.SHOP_BUY_INTERVAL then
         State.timers.last_shop_buy = current_time
         for _, seed in ipairs(all_seeds) do
@@ -542,13 +536,6 @@ local function main_loop()
     if time_since(State.timers.last_cleaning_plants) > CONFIG.CLEANING_INTERVAL then
         State.timers.last_cleaning_plants = current_time
         delete_non_whitelisted_plants()
-        return
-    end
-    
-    if time_since(State.timers.last_cook_food) > CONFIG.COOK_INTERVAL then
-        State.timers.last_cook_food = current_time
-        cook_and_submit_food()
-        return
     end
     
     local gourmet_pack = get_tool("Gourmet Seed Pack")
@@ -558,6 +545,16 @@ local function main_loop()
     
     if not State.selling_inventory then
         pickup_all_fruits()
+    end
+    
+    if time_since(State.timers.last_cook_food) > CONFIG.COOK_INTERVAL then
+        State.timers.last_cook_food = current_time
+        cook_and_submit_food()
+    end
+    
+    if time_since(State.timers.last_sell_inventory) > CONFIG.SELL_INTERVAL then
+        State.timers.last_sell_inventory = current_time
+        sell_inventory()
     end
     
     wait(0.1)
