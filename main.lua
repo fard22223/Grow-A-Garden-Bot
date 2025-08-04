@@ -271,7 +271,7 @@ local function watering_can(pos)
     end
     
     State.timers.last_water = get_current_time()
-    local tool = get_tool("Watering Can")
+    local tool = get_tool("Watering Can", true)
     if not tool then return false end
     
     pcall(function()
@@ -281,7 +281,7 @@ local function watering_can(pos)
 end
 
 local function sprinkler(type, cframe)
-    local sprinkler_item = get_tool(type)
+    local sprinkler_item = get_tool(type, true)
     if not sprinkler_item then return false end
     
     pcall(function()
@@ -334,7 +334,7 @@ local function cook_and_submit_food()
     
     local food_types = {"Soup", "Cake", "Burger", "Sushi", "Pizza", "Donut", "Ice Cream", "Hot Dog", "Waffle", "Pie", "Sandwich", "Salad"}
     for _, food_type in ipairs(food_types) do
-        if get_tool(food_type) then
+        if get_tool(food_type, true) then
             wait(1)
             pcall(function()
                 game.ReplicatedStorage.GameEvents.SubmitFoodService_RE:FireServer("SubmitHeldFood")
@@ -454,7 +454,7 @@ local function delete_non_whitelisted_plants()
         if State.quit or math.random(1, 7) == 7 then break end
         
         if not whitelisted_seeds[plant.Name] then
-            get_tool("Shovel")
+            get_tool("Shovel", true)
             pcall(function()
                 workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, plant.PrimaryPart.Position)
                 click_on_part(plant.PrimaryPart)
@@ -484,7 +484,7 @@ local function delete_all_plants()
     for _, plant in pairs(State.found_farm.Important.Plants_Physical:GetChildren()) do
         if State.quit then break end
         
-        get_tool("Shovel")
+        get_tool("Shovel", true)
         pcall(function()
             workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, plant.PrimaryPart.Position)
             click_on_part(plant.PrimaryPart)
