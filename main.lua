@@ -5,6 +5,18 @@ local teleport_service = game:GetService("TeleportService")
 local gui_service = game:GetService("GuiService")
 local run_service = game:GetService("RunService")
 
+repeat task.wait() until game.CoreGui:FindFirstChild('RobloxPromptGui')
+local lp,po,ts = game:GetService('Players').LocalPlayer,game.CoreGui.RobloxPromptGui.promptOverlay,game:GetService('TeleportService')
+ 
+po.ChildAdded:connect(function(a)
+    if a.Name == 'ErrorPrompt' then
+        while true do
+            ts:Teleport(game.PlaceId)
+            task.wait(2)
+        end
+    end
+end)
+
 local CONFIG = {
     WALK_SPEED = 75,
     SELL_INTERVAL = 7,
@@ -554,11 +566,11 @@ end
 
 initialize()
 
---coroutine.wrap(function()
-    --while State.do_main_loop do
-        --pcall(main_loop)
-    --end
---end)()
+coroutine.wrap(function()
+    while State.do_main_loop do
+        pcall(main_loop)
+    end
+end)()
 
 chat_service:Chat(game.Players.LocalPlayer.Character.Head, "chat commands: stopbotting, startbotting, deleteallbadplants, deleteallplants", Enum.ChatColor.Blue)
 text_chat_service.OnIncomingMessage = function(message)
