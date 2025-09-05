@@ -150,7 +150,7 @@ local plant_all_good_seeds = function()
 				if all_bad_seeds[normalize_seed_name(v.Name)] then
 					v.Parent = local_player.Character
 					local seedName = normalize_seed_name(v.Name)
-					plant_seed(farm_physical_plants:FindFirstChildOfClass("Part"), seedName .. " Seed")
+					plant_seed(current_state.farm_plant_locations:FindFirstChildOfClass("Part"), seedName .. " Seed")
 				end
 			end
 		end
@@ -160,7 +160,7 @@ local plant_all_good_seeds = function()
 				if all_good_seeds[normalize_seed_name(v.Name)] then
 					v.Parent = local_player.Character
 					local seedName = normalize_seed_name(v.Name)
-					plant_seed(farm_physical_plants:FindFirstChildOfClass("Part"), seedName .. " Seed")
+					plant_seed(current_state.farm_plant_locations:FindFirstChildOfClass("Part"), seedName .. " Seed")
 				end
 			end
 		end
@@ -199,7 +199,7 @@ local sell_inventory = function()
 end
 
 local harvest_plants = function()
-	for i, v in pairs(farm_physical_plants:GetDescendants()) do
+	for i, v in pairs(current_state.farm_physical_plants:GetDescendants()) do
 		if v:IsA("ProximityPrompt") and v.Enabled then
 			fireproximityprompt(v)
 		end
