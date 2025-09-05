@@ -52,6 +52,8 @@ local all_good_seeds = {
     ["Elder Strawberry"] = true,
     ["Romanesco"] = true,
 }
+
+local all_seeds = { "Carrot", "Blueberry", "Strawberry", "Orange Tulip", "Tomato", "Corn", "Daffodil", "Watermelon", "Pumpkin", "Apple", "Bamboo", "Coconut", "Cactus", "Dragon Fruit", "Mango", "Grape", "Pepper", "Mushroom", "Cacao", "Beanstalk", "Ember Lily", "Sugar Apple", "Burning Bud", "Giant Pinecone", "Elder Strawberry", "Romanesco"} 
 local all_gear = { "Watering Can", "Trowel", "Basic Sprinkler", "Advanced Sprinkler", "Master Sprinkler", "Grandmaster Sprinkler", "Magnifying Glass"} 
 local all_eggs = { "Common Egg", "Uncommon Egg", "Rare Egg", "Legendary Egg", "Mythical Egg", "Bug Egg"} 
 local all_traveling_merchant_items = { "Paradise Egg", "Rare Summer Egg", "Common Summer Egg", "Cauliflower", "Rafflesia", "Green Apple", "Avocado", "Banana", "Pineapple", "Kiwi", "Bell Pepper", "Prickly Pear", "Loquat", "Feijoa", "Pitcher Plant", "Mutation Spray Wet", "Mutation Spray Windstruck", "Mutation Spray Verdant", "Night Staff", "Star Caller", "Mutation Spray Cloudtouched" }
@@ -75,6 +77,7 @@ local get_players_farm = function(player)
     return nil
 end
 
+local farm = get_players_farm(local_player)
 local current_state = {
     last_sell = tick(),
     last_water = tick(),
@@ -82,10 +85,10 @@ local current_state = {
     last_harvest = tick(),
     last_plant = tick(),
 
-    farm = get_players_farm(local_player),
-    farm_important = farm.Important,
-    farm_plant_locations = farm.Plant_Locations,
-    farm_physical_plants = farm.Plants_Physical,
+    farm = farm,
+    farm_important = farm and farm.Important,
+    farm_plant_locations = farm and farm.Plant_Locations,
+    farm_physical_plants = farm and farm.Plants_Physical,
 }
 
 local script_config = {
@@ -144,7 +147,7 @@ local plant_all_good_seeds = function()
 	if sheckles.Value < 1000000000 then
 		for i, v in pairs(local_player.Backpack:GetChildren()) do
 			if v:IsA("Tool") and string.find(v.Name, "Seed") then
-				if all_seeds[normalize_seed_name(v.Name)] then
+				if all_bad_seeds[normalize_seed_name(v.Name)] then
 					v.Parent = local_player.Character
 					local seedName = normalize_seed_name(v.Name)
 					plant_seed(farm_physical_plants:FindFirstChildOfClass("Part"), seedName .. " Seed")
