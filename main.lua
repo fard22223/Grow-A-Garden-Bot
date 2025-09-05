@@ -88,11 +88,11 @@ local current_state = {
     farm = farm,
     farm_important = farm.Important,
     farm_plant_locations = farm:FindFirstChild("Plants_Locations", true),
-    farm_physical_plants = farm:FindFirstChild("Plant_Physical", true),
+    farm_physical_plants = farm:FindFirstChild("Plants_Physical", true),
 }
 
 local script_config = {
-	sell_interval = 1,
+	sell_interval = 35,
 	water_interval = 0.15,
 }
 
