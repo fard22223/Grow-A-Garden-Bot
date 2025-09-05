@@ -1,160 +1,144 @@
-local vim = game:GetService("VirtualInputManager")
-local chat_service = game:GetService("Chat")
-local text_chat_service = game:GetService("TextChatService")
 local teleport_service = game:GetService("TeleportService")
 local players = game:GetService("Players")
-local replicated = game:GetService("ReplicatedStorage")
+local replicated_storage = game:GetService("ReplicatedStorage")
 
-repeat task.wait() until game.CoreGui:FindFirstChild("RobloxPromptGui")
+local farms = workspace.Farms
+local sell_npc = workspace.NPCS.Steven
+local game_events = replicated_storage.GameEvents
 
-local lp = players.LocalPlayer
-local po = game.CoreGui.RobloxPromptGui.promptOverlay
+local local_player = players.LocalPlayer
+local prompt_overlay = game.CoreGui.RobloxPromptGui.promptOverlay
+local sheckles = local_player.leaderstats.Sheckles
 
--- Force rejoin loop on error prompts
-po.ChildAdded:Connect(function(a)
-	if a.Name == "ErrorPrompt" then
-		while true do
-			teleport_service:Teleport(game.PlaceId)
-			task.wait(2)
+local all_seeds = { "Carrot", "Blueberry", "Strawberry", "Orange Tulip", "Tomato", "Corn", "Daffodil", "Watermelon", "Pumpkin", "Apple", "Bamboo", "Coconut", "Cactus", "Dragon Fruit", "Mango", "Grape", "Pepper", "Mushroom", "Cacao", "Beanstalk", "Ember Lily", "Sugar Apple", "Burning Bud", "Giant Pinecone", "Elder Strawberry", "Romanesco"} 
+local all_gear = { "Watering Can", "Trowel", "Basic Sprinkler", "Advanced Sprinkler", "Master Sprinkler", "Grandmaster Sprinkler", "Magnifying Glass"} 
+local all_eggs = { "Common Egg", "Uncommon Egg", "Rare Egg", "Legendary Egg", "Mythical Egg", "Bug Egg"} 
+local all_traveling_merchant_items = { "Paradise Egg", "Rare Summer Egg", "Common Summer Egg", "Cauliflower", "Rafflesia", "Green Apple", "Avocado", "Banana", "Pineapple", "Kiwi", "Bell Pepper", "Prickly Pear", "Loquat", "Feijoa", "Pitcher Plant", "Mutation Spray Wet", "Mutation Spray Windstruck", "Mutation Spray Verdant", "Night Staff", "Star Caller", "Mutation Spray Cloudtouched" }
+
+local all_threads = {}
+local do_loop = true
+
+local get_players_farm = function(player)
+	local all_farms = farms:GetChildren()
+	local get_owner = function(current_farm)
+		return current_farm.Important.Data.Owner.Value
+	end
+
+	for _, current_farm in all_farms do
+		local current_owner = get_owner(current_farm)
+		if current_owner == local_player.Name then
+			return current_farm
 		end
 	end
-end)
 
-local CONFIG = {
-	WALK_SPEED = 75,
-	SELL_INTERVAL = 7,
-	SHOP_BUY_INTERVAL = 25,
-	GEAR_BUY_INTERVAL = 25,
-	EGG_BUY_INTERVAL = 25,
-	MERCHANT_BUY_INTERVAL = 25,
-	CLEANING_INTERVAL = 45,
-	WATER_COOLDOWN = 0.25,
+    return nil
+end
+
+local current_state = {
+	last_sell = tick(),
+	last_water = tick(),
+	last_trowel = tick(),
+	
+	farm = get_players_farm(local_player),
+	farm_important = farm.Important,
+ 	farm_plant_locations = farm.Plant_Locations,
+  	farm_physical_plants = farm.Plants_Physical,
 }
 
-local all_seeds = {"Carrot","Blueberry","Strawberry","Tomato"}
-local all_gear = {"Watering Can","Trowel"}
-local all_eggs = {"Common Egg","Mythical Egg"}
-local all_traveling_merchant_items = {"Banana","Kiwi"}
-
-local State = {
-	found_farm = nil,
-	do_main_loop = true,
-	quit = false,
-	timers = {
-		last_water = 0,
-		last_sell_inventory = 0,
-		last_traveling_merchant_buy = 0,
-		last_gear_buy = 0,
-		last_shop_buy = 0,
-		last_egg_buy = 0,
-		last_cleaning_plants = 0,
-	}
+local script_config = {
+	sell_interval = 1,
+	water_interval = 0.15,
 }
 
-local function get_current_time() return tick() end
-local function time_since(t) return get_current_time() - t end
+local exit = function()
+	for i, v in all_threads do
+		pcall(function()
+			task.cancel(v)
+		end)
 
--- Initialization (NO checks)
-local function initialize()
-	lp.Character.Humanoid.WalkSpeed = CONFIG.WALK_SPEED
-
-	for _, farm in pairs(workspace.Farm:GetChildren()) do
-		if farm.Important.Data.Owner.Value == lp.Name then
-			State.found_farm = farm
-			break
-		end
+		pcall(function()
+			v:Disconnect()
+		end)
 	end
 
-	for _, part in pairs(workspace.Farm:GetDescendants()) do
-		if part:IsA("BasePart") then
-			part.CanCollide = false
-		end
-	end
+	do_loop = false
+end
 
-	workspace.Farm.DescendantAdded:Connect(function(d)
-		if d:IsA("BasePart") then
-			d.CanCollide = false
-		end
+local create_shit = function()
+	local gui = Instance.new("ScreenGui")
+	gui.Parent = local_player.PlayerGui
+	gui.Name = "whoreslmao"
+
+	local button = Instance.new("TextButton")
+	button.Parent = gui
+	button.Name = "whorebutton"
+	button.Text = "STOP BOTTING"
+
+	all_threads[#all_threads + 1] = button.MouseButton1Down:Connect(function()
+		gui:Destroy()
+		button:Destroy()
+		exit()
 	end)
 end
 
--- Buy functions (raw, no pcall)
-local function buy_seed(seed)
-	replicated.GameEvents.BuySeedStock:FireServer(seed)
+local submit_fairy_fountain = function()
+	game_events.FairyService.SubmitFairyFountainAllPlants:FireServer()
 end
 
-local function buy_traveling_merchant_item(item)
-	replicated.GameEvents.BuyTravelingMerchantShopStock:FireServer(item)
+local plant_seed = function(pos, seed_name) 
+	game_events.Plant_RE:FireServer(pos, seed_name) 
 end
 
-local function buy_gear(gear)
-	replicated.GameEvents.BuyGearStock:FireServer(gear)
+local buy_seed = function(seed)
+	game_events.BuySeedStock:FireServer(seed)
 end
 
-local function buy_egg(egg)
-	replicated.GameEvents.BuyPetEgg:FireServer(egg)
+local buy_merchant = function(item)
+	game_events.BuyTravelingMerchantShopStock:FireServer(item)
 end
 
-local function sell_inventory()
-	lp.Character.Humanoid:MoveTo(workspace.NPCS.Steven.HumanoidRootPart.Position)
-	lp.Character.Humanoid.MoveToFinished:Wait()
-	replicated.GameEvents.Sell_Inventory:FireServer()
+local buy_gear = function(gear)
+	game_events.BuyGearStock:FireServer(gear)
 end
 
--- Main loop (raw)
-local function main_loop()
-	local now = get_current_time()
-
-	if time_since(State.timers.last_shop_buy) > CONFIG.SHOP_BUY_INTERVAL then
-		State.timers.last_shop_buy = now
-		for _, seed in ipairs(all_seeds) do buy_seed(seed) end
-	end
-
-	if time_since(State.timers.last_gear_buy) > CONFIG.GEAR_BUY_INTERVAL then
-		State.timers.last_gear_buy = now
-		for _, gear in ipairs(all_gear) do buy_gear(gear) end
-	end
-
-	if time_since(State.timers.last_egg_buy) > CONFIG.EGG_BUY_INTERVAL then
-		State.timers.last_egg_buy = now
-		for _, egg in ipairs(all_eggs) do buy_egg(egg) end
-	end
-
-	if time_since(State.timers.last_traveling_merchant_buy) > CONFIG.MERCHANT_BUY_INTERVAL then
-		State.timers.last_traveling_merchant_buy = now
-		for _, item in ipairs(all_traveling_merchant_items) do buy_traveling_merchant_item(item) end
-	end
-
-	if time_since(State.timers.last_sell_inventory) > CONFIG.SELL_INTERVAL then
-		State.timers.last_sell_inventory = now
-		sell_inventory()
-	end
-
-	task.wait(0.5)
+local buy_egg = function(egg)
+	game_events.BuyPetEgg:FireServer(egg)
 end
 
-initialize()
+local sell_inventory = function()
+	if (tick() - current_state.last_sell) < script_config.sell_interval then return end 
+	current_state.last_sell = tick() 
 
-coroutine.wrap(function()
-	while State.do_main_loop do
+	local old_position = local_player.Character.HumanoidRootPart.CFrame
+	local_player.Character.HumanoidRootPart.CFrame = sell_npc.HumanoidRootPart.CFrame
+	all_threads[#all_threads + 1] = task.delay(0.5, function() 
+		game_events.Sell_Inventory:FireServer()
+	end)
+
+	all_threads[#all_threads + 1] = task.delay(2, function()
+		local_player.Character.HumanoidRootPart.CFrame = old_position
+	end)
+end
+
+local main_loop = function()
+	for _, seed in ipairs(all_seeds) do buy_seed(seed) end
+	for _, gear in ipairs(all_gear) do buy_gear(gear) end
+	for _, egg in ipairs(all_eggs) do buy_egg(egg) end
+	for _, item in ipairs(all_traveling_merchant_items) do buy_merchant(item) end
+	sell_inventory()
+
+	task.wait()
+end
+
+task.spawn(function()
+	while do_loop do
 		main_loop()
 	end
-end)()
+end)
 
-chat_service:Chat(lp.Character.Head, "chat commands: stopbotting, startbotting", Enum.ChatColor.Blue)
-
-text_chat_service.OnIncomingMessage = function(message)
-	if message.TextSource and message.TextSource.UserId == lp.UserId then
-		local command = message.Text:lower()
-		if command == "stopbotting" then
-			State.do_main_loop = false
-		elseif command == "startbotting" then
-			State.do_main_loop = true
-			coroutine.wrap(function()
-				while State.do_main_loop do
-					main_loop()
-				end
-			end)()
-		end
+create_shit()
+all_threads[#all_threads + 1] = prompt_overlay.ChildAdded:Connect(function(prompt)
+	if prompt.Name == "ErrorPrompt" then
+		while task.wait(1) do teleport_service:Teleport(game.PlaceId) end
 	end
-end
+end)
