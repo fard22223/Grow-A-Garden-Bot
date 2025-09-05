@@ -88,7 +88,7 @@ local current_state = {
     farm = farm,
     farm_important = farm and farm.Important,
     farm_plant_locations = farm_important and farm_important.Plant_Locations,
-    farm_physical_plants = farm_important and farm_important.Plants_Physical,
+    farm_physical_plants = farm_important.Plants_Physical,
 }
 
 local script_config = {
