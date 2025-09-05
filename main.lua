@@ -76,16 +76,16 @@ local get_players_farm = function(player)
 end
 
 local current_state = {
-	last_sell = tick(),
-	last_water = tick(),
-	last_trowel = tick(),
-	last_harvest = tick(),
-	last_plant = tick()
+    last_sell = tick(),
+    last_water = tick(),
+    last_trowel = tick(),
+    last_harvest = tick(),
+    last_plant = tick(),
 
-	farm = get_players_farm(local_player),
-	farm_important = farm.Important,
- 	farm_plant_locations = farm.Plant_Locations,
-  	farm_physical_plants = farm.Plants_Physical,
+    farm = get_players_farm(local_player),
+    farm_important = farm.Important,
+    farm_plant_locations = farm.Plant_Locations,
+    farm_physical_plants = farm.Plants_Physical,
 }
 
 local script_config = {
@@ -146,7 +146,8 @@ local plant_all_good_seeds = function()
 			if v:IsA("Tool") and string.find(v.Name, "Seed") then
 				if all_seeds[normalize_seed_name(v.Name)] then
 					v.Parent = local_player.Character
-					plant_seed(farm_physical_plants:FindFirstChildOfClass("Part"), normalize_seed_name .. " Seed")
+					local seedName = normalize_seed_name(v.Name)
+					plant_seed(farm_physical_plants:FindFirstChildOfClass("Part"), seedName .. " Seed")
 				end
 			end
 		end
@@ -155,7 +156,8 @@ local plant_all_good_seeds = function()
 			if v:IsA("Tool") and string.find(v.Name, "Seed") then
 				if all_good_seeds[normalize_seed_name(v.Name)] then
 					v.Parent = local_player.Character
-					plant_seed(farm_physical_plants:FindFirstChildOfClass("Part"), normalize_seed_name .. " Seed")
+					local seedName = normalize_seed_name(v.Name)
+					plant_seed(farm_physical_plants:FindFirstChildOfClass("Part"), seedName .. " Seed")
 				end
 			end
 		end
