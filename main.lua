@@ -10,6 +10,7 @@ local local_player = players.LocalPlayer
 local prompt_overlay = game.CoreGui.RobloxPromptGui.promptOverlay
 local sheckles = local_player.leaderstats.Sheckles
 
+local all_good_seeds = {"Grape", "Pepper", "Mushroom", "Cacao", "Beanstalk", "Ember Lily", "Sugar Apple", "Burning Bud", "Giant Pinecone", "Elder Strawberry", "Romanesco"} 
 local all_seeds = { "Carrot", "Blueberry", "Strawberry", "Orange Tulip", "Tomato", "Corn", "Daffodil", "Watermelon", "Pumpkin", "Apple", "Bamboo", "Coconut", "Cactus", "Dragon Fruit", "Mango", "Grape", "Pepper", "Mushroom", "Cacao", "Beanstalk", "Ember Lily", "Sugar Apple", "Burning Bud", "Giant Pinecone", "Elder Strawberry", "Romanesco"} 
 local all_gear = { "Watering Can", "Trowel", "Basic Sprinkler", "Advanced Sprinkler", "Master Sprinkler", "Grandmaster Sprinkler", "Magnifying Glass"} 
 local all_eggs = { "Common Egg", "Uncommon Egg", "Rare Egg", "Legendary Egg", "Mythical Egg", "Bug Egg"} 
@@ -38,7 +39,9 @@ local current_state = {
 	last_sell = tick(),
 	last_water = tick(),
 	last_trowel = tick(),
-	
+	last_harvest = tick(),
+	last_plant = tick()
+
 	farm = get_players_farm(local_player),
 	farm_important = farm.Important,
  	farm_plant_locations = farm.Plant_Locations,
@@ -89,6 +92,36 @@ local plant_seed = function(pos, seed_name)
 	game_events.Plant_RE:FireServer(pos, seed_name) 
 end
 
+local normalize_seed_name = function(name)
+	name = string.gsub(name, "%s*%[x%d+%]$", "")
+	name = string.gsub(name, "%s*Seed$", "")
+	return name
+end
+
+local plant_all_good_seeds = function()
+	local_player.Character.Humanoid:UnequipTools()
+
+	if sheckles.Value < 1000000000 then
+		for i, v in pairs(local_player.Backpack:GetChildren()) do
+			if v:IsA("Tool") and string.find(v.Name, "Seed") then
+				if all_seeds[normalize_seed_name(v.Name)] then
+					v.Parent = local_player.Character
+					plant_seed(farm_physical_plants:FindFirstChildOfClass("Part"), normalize_seed_name .. " Seed")
+				end
+			end
+		end
+	else
+		for i, v in pairs(local_player.Backpack:GetChildren()) do
+			if v:IsA("Tool") and string.find(v.Name, "Seed") then
+				if all_good_seeds[normalize_seed_name(v.Name)] then
+					v.Parent = local_player.Character
+					plant_seed(farm_physical_plants:FindFirstChildOfClass("Part"), normalize_seed_name .. " Seed")
+				end
+			end
+		end
+	end
+end
+
 local buy_seed = function(seed)
 	game_events.BuySeedStock:FireServer(seed)
 end
@@ -120,13 +153,24 @@ local sell_inventory = function()
 	end)
 end
 
+local harvest_plants = function()
+	for i, v in pairs(farm_physical_plants:GetDescendants()) do
+		if v:IsA("ProximityPrompt") and v.Enabled then
+			fireproximityprompt(v)
+		end
+	end
+end
+
 local main_loop = function()
 	for _, seed in ipairs(all_seeds) do buy_seed(seed) end
 	for _, gear in ipairs(all_gear) do buy_gear(gear) end
 	for _, egg in ipairs(all_eggs) do buy_egg(egg) end
 	for _, item in ipairs(all_traveling_merchant_items) do buy_merchant(item) end
 	sell_inventory()
-
+	submit_fairy_fountain()
+	harvest_plants()
+	plant_all_good_seeds()
+	
 	task.wait()
 end
 
