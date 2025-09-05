@@ -86,9 +86,9 @@ local current_state = {
     last_plant = tick(),
 
     farm = farm,
-    farm_important = farm and farm.Important,
-    farm_plant_locations = farm_important and farm_important.Plant_Locations,
-    farm_physical_plants = farm_important.Plants_Physical,
+    farm_important = farm.Important,
+    farm_plant_locations = farm_important.Plant_Locations,
+    farm_physical_plants = farm_important.Plant_Physical,
 }
 
 local script_config = {
