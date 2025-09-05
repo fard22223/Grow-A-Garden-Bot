@@ -87,8 +87,8 @@ local current_state = {
 
     farm = farm,
     farm_important = farm.Important,
-    farm_plant_locations = farm_important.Plant_Locations,
-    farm_physical_plants = farm_important.Plant_Physical,
+    farm_plant_locations = farm:FindFirstChild("Plant_Locations", true),
+    farm_physical_plants = farm:FindFirstChild("Plant_Physical", true),
 }
 
 local script_config = {
