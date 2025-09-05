@@ -2,7 +2,7 @@ local teleport_service = game:GetService("TeleportService")
 local players = game:GetService("Players")
 local replicated_storage = game:GetService("ReplicatedStorage")
 
-local farms = workspace.Farms
+local farms = workspace.Farm
 local sell_npc = workspace.NPCS.Steven
 local game_events = replicated_storage.GameEvents
 
