@@ -92,8 +92,9 @@ local current_state = {
 }
 
 local script_config = {
-	sell_interval = 35,
+	sell_interval = 155,
 	water_interval = 0.15,
+	pickup_interval = 1
 }
 
 local exit = function()
@@ -142,26 +143,36 @@ local normalize_seed_name = function(name)
 end
 
 local plant_all_good_seeds = function()
-	local_player.Character.Humanoid:UnequipTools()
+	local find_tool = function(name)
+		for i, v in pairs(local_player.Character:GetChildren()) do
+			if v:IsA("Tool") and string.find(v.Name, name) then
+				return v
+			end
+		end
+
+		for i, v in pairs(local_player.Backpack:GetChildren()) do
+			if v:IsA("Tool") and string.find(v.Name, name) then
+				return v
+			end
+		end
+
+		return nil
+	end
 
 	if sheckles.Value < 1000000000 then
-		for i, v in pairs(local_player.Backpack:GetChildren()) do
-			if v:IsA("Tool") and string.find(v.Name, "Seed") then
-				if all_bad_seeds[normalize_seed_name(v.Name)] then
-					v.Parent = local_player.Character
-					local seedName = normalize_seed_name(v.Name)
-					plant_seed(current_state.farm_plant_locations:FindFirstChildOfClass("Part"), seedName .. " Seed")
-				end
+		for i, v in all_bad_seeds do
+			local tool = find_tool(v .. " Seed") 
+			if tool then
+				local_player.Character.Humanoid:EquipTool(tool)
+				plant_seed(current_state.farm_plant_locations:FindFirstChildOfClass("Part").Position + Vector3.new(0, 0.25, 0), v)
 			end
 		end
 	else
-		for i, v in pairs(local_player.Backpack:GetChildren()) do
-			if v:IsA("Tool") and string.find(v.Name, "Seed") then
-				if all_good_seeds[normalize_seed_name(v.Name)] then
-					v.Parent = local_player.Character
-					local seedName = normalize_seed_name(v.Name)
-					plant_seed(current_state.farm_plant_locations:FindFirstChildOfClass("Part"), seedName .. " Seed")
-				end
+		for i, v in all_good_seeds do
+			local tool = find_tool(v .. " Seed") 
+			if tool then
+				local_player.Character.Humanoid:EquipTool(tool)
+				plant_seed(current_state.farm_plant_locations:FindFirstChildOfClass("Part").Position + Vector3.new(0, 0.25, 0), v)
 			end
 		end
 	end
