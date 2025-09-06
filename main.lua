@@ -161,18 +161,22 @@ local plant_all_good_seeds = function()
 
 	if sheckles.Value < 1000000000 then
 		for i, v in all_bad_seeds do
-			local tool = find_tool(v .. " Seed") 
+			local tool = find_tool(i .. " Seed") 
 			if tool then
 				local_player.Character.Humanoid:EquipTool(tool)
+				task.wait(0.05)
 				plant_seed(current_state.farm_plant_locations:FindFirstChildOfClass("Part").Position + Vector3.new(0, 0.25, 0), v)
+				task.wait(0.05)
 			end
 		end
 	else
 		for i, v in all_good_seeds do
-			local tool = find_tool(v .. " Seed") 
+			local tool = find_tool(i .. " Seed") 
 			if tool then
 				local_player.Character.Humanoid:EquipTool(tool)
+				task.wait(0.05)
 				plant_seed(current_state.farm_plant_locations:FindFirstChildOfClass("Part").Position + Vector3.new(0, 0.25, 0), v)
+				task.wait(0.05)
 			end
 		end
 	end
